@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Valentine Login & Crazy No Button (Final Update)</title>
+  <style>
+    /* Global Styles */
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 1s ease;
+      overflow: hidden;
+    }
+    h1 {
+      text-align: center;
+      color: #ff0077;
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+    }
+    /* Login Section */
+    #loginSection {
+      background: #fff;
+      padding: 30px 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    #loginSection input {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 1em;
+      border: 2px solid #ff0077;
+      border-radius: 5px;
+      transition: border 0.3s;
+    }
+    #loginSection input:focus {
+      border-color: #ff66a3;
+    }
+    #loginSection button {
+      padding: 10px 20px;
+      font-size: 1em;
+      border: none;
+      border-radius: 5px;
+      background-color: #66ff66;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+    #loginSection button:hover {
+      transform: scale(1.1);
+    }
+    #loginMessage {
+      margin-top: 15px;
+      color: #ff0077;
+      font-weight: bold;
+    }
+    /* Valentine Section */
+    #valentineSection {
+      display: none;
+      text-align: center;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+    #valentineSection img {
+      max-width: 300px;
+      display: block;
+      margin: 20px auto;
+    }
+    /* Button Container */
+    #buttonContainer {
+      position: relative;
+      width: 500px;
+      height: 300px;
+      margin: 30px auto;
+      border: 2px dashed transparent;
+    }
+    /* Yes Button */
+    .btn-yes {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background-color: #66ff66;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+    }
+    .btn-yes:hover {
+      transform: scale(1.1);
+    }
+    /* No Button */
+    .btn-no {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 15px 30px;
+      font-size: 1.2em;
+      background-color: #ff6666;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    /* Door Element */
+    #door {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      font-size: 1.5em;
+      background-color: #fff;
+      border: 5px solid #333;
+      border-radius: 10px;
+      cursor: pointer;
+      display: none;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+    /* Door zoom effect */
+    #door.zoom {
+      transition: transform 1s ease;
+      transform: scale(2);
+    }
+    /* Message display */
+    #message {
+      margin-top: 25px;
+      font-size: 1.5em;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    @keyframes flash {
+      0%, 100% { color: #ff0077; }
+      50% { color: #000; }
+    }
+    .flash {
+      animation: flash 1s linear;
+    }
+  </style>
+</head>
+<body>
+  <!-- Audio for door knocking -->
+  <audio id="doorKnockSound" src="https://www.soundjay.com/door/sounds/door-knock-1.mp3"></audio>
+  
+  <!-- Login Screen -->
+  <div id="loginSection">
+    <h1>Welcome, Love!</h1>
+    <p>To continue, please enter your name:</p>
+    <input type="text" id="firstName" placeholder="First Name">
+    <br>
+    <input type="text" id="lastName" placeholder="Last Name">
+    <br>
+    <button id="loginBtn">Let Me In</button>
+    <div id="loginMessage"></div>
+  </div>
+  
+  <!-- Valentine Page -->
+  <div id="valentineSection">
+    <h1>Will you be my valentine?</h1>
+    <img src="https://gifdb.com/images/high/cute-love-bear-roses-ou7zho5oosxnpo6k.gif" alt="Cute Teddy Bear">
+    <div id="buttonContainer">
+      <button class="btn-yes" id="yesBtn">Yes</button>
+      <button class="btn-no" id="noBtn">No</button>
+    </div>
+    <div id="message"></div>
+  </div>
+  
+  <!-- Door Element (hidden until triggered) -->
+  <div id="door">
+    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS9tXUF3JLHhaZnTgURqhCvzyhvwWmfHXTDig&s" alt="Door" style="max-width:100%; border-radius:10px;"><br>
+    someone is at the door for you.....
+  </div>
+  
+  <script>
+    // --- Login Logic ---
+    const loginBtn = document.getElementById('loginBtn');
+    const loginMessage = document.getElementById('loginMessage');
+    loginBtn.addEventListener('click', function() {
+      const firstName = document.getElementById('firstName').value.trim();
+      const lastName = document.getElementById('lastName').value.trim();
+      const correctLastName = "Chikhradze";
+      
+      if(firstName === "Rukhshona" && lastName === correctLastName){
+        document.getElementById('loginSection').style.display = "none";
+        document.getElementById('valentineSection').style.display = "block";
+      } else if(firstName === "Rukhshona" && lastName.toLowerCase() === "rahmatova"){
+        loginMessage.textContent = "I don't know about that last name...";
+      } else if(firstName === "Rukhshona" && lastName.toLowerCase().includes("chik") && lastName !== correctLastName){
+        loginMessage.textContent = "WOW U cant spell my last name?";
+      } else {
+        loginMessage.textContent = "Access Denied. Are you sure you're my girlfriend?";
+      }
+    });
+    
+    // --- Valentine Page Logic ---
+    const yesBtn = document.getElementById('yesBtn');
+    const noBtn = document.getElementById('noBtn');
+    const messageDiv = document.getElementById('message');
+    const buttonContainer = document.getElementById('buttonContainer');
+    const doorElem = document.getElementById('door');
+    const doorKnockSound = document.getElementById('doorKnockSound');
+    
+    // Corny lines for the No button (updated ghost line)
+    const noMessages = [
+      "No",
+      "Are you sure?",
+      "What if I asked really nicely?",
+      "Pretty please",
+      "With a chocolate rice cake on top",
+      "What about a matcha frostie?",
+      "PLEASE POOKIE",
+      "But :*(",
+      "I am going to die",
+      "Yep im dead",
+      "ok ur talking to lazare's ghost",
+      "please babe",
+      ":((((",
+      "PRETTY PLEASE",
+      "Estoy muerto",
+      "No :("
+    ];
+    
+    let noCount = 0;
+    let evadeModeActive = false; // whether the button is evading
+    let chaseEnded = false;      // whether the 5-second chase is over
+    let evadeInterval = null;
+    let sikeCount = 0;           // counts clicks after chase ends
+    
+    // Display a message with flash effect.
+    function displayMessage(text) {
+      messageDiv.textContent = text;
+      messageDiv.classList.remove('flash');
+      void messageDiv.offsetWidth; // trigger reflow
+      messageDiv.classList.add('flash');
+      messageDiv.style.opacity = 1;
+    }
+    
+    // --- Yes Button Behavior ---
+    yesBtn.addEventListener('click', () => {
+      if (noCount > 0) {
+        displayMessage("I knew u would change your mind ;)");
+      } else {
+        displayMessage("Thats what i thought, dont even think of pressing no");
+      }
+      // Both buttons remain active (until door sequence triggers)
+    });
+    
+    // --- No Button Behavior ---
+    noBtn.addEventListener('click', () => {
+      if (!evadeModeActive) {
+        if (noCount < noMessages.length) {
+          displayMessage(noMessages[noCount]);
+          noCount++;
+        }
+        if (noCount === noMessages.length) {
+          displayMessage("I'm done begging now you can't press it anymore");
+          startEvadeMode();
+        }
+      } else {
+        if (chaseEnded) {
+          sikeCount++;
+          if (sikeCount < 3) {
+            displayMessage("SIKE U THOUGHT");
+            teleportNoButton();
+          } else {
+            stopEvade();
+            noBtn.style.display = "none"; // remove No button
+            doorElem.style.display = "block";
+            doorKnockSound.play();
+          }
+        } else {
+          displayMessage("Catch me if you can!");
+        }
+      }
+    });
+    
+    // --- Evade Mode Functions ---
+    function moveNoButtonScreen() {
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = window.innerWidth - btnRect.width;
+      const maxY = window.innerHeight - btnRect.height;
+      const randomX = Math.floor(Math.random() * maxX);
+      const randomY = Math.floor(Math.random() * maxY);
+      noBtn.style.left = randomX + 'px';
+      noBtn.style.top = randomY + 'px';
+    }
+    
+    function startEvadeMode() {
+      document.body.appendChild(noBtn);
+      noBtn.style.position = "fixed";
+      evadeModeActive = true;
+      evadeInterval = setInterval(moveNoButtonScreen, 300);
+      setTimeout(() => {
+        stopEvade();
+        chaseEnded = true;
+        displayMessage("fine u can press it");
+      }, 5000);
+    }
+    
+    function stopEvade() {
+      if (evadeInterval) {
+        clearInterval(evadeInterval);
+        evadeInterval = null;
+      }
+    }
+    
+    function teleportNoButton() {
+      moveNoButtonScreen();
+    }
+    
+    noBtn.addEventListener('mouseenter', () => {
+      if (evadeModeActive && !chaseEnded) {
+        moveNoButtonScreen();
+      }
+    });
+    
+    // --- Door Behavior ---
+    doorElem.addEventListener('click', doorClick);
+    
+    function doorClick() {
+      doorElem.classList.add('zoom');
+      setTimeout(() => {
+        doorElem.innerHTML = '<img src="https://www.looper.com/img/gallery/dexter-new-blood-showrunner-has-some-eyebrow-raising-remarks-about-the-original-series/l-intro-1635801569.jpg" alt="Dexter" style="max-width:100%; border-radius:10px;"><br>You don\'t have a choice anymore';
+        doorElem.classList.remove('zoom');
+        doorElem.removeEventListener('click', doorClick);
+        // After 2 seconds, hide the door and show only the Yes button centered.
+        setTimeout(() => {
+          doorElem.style.display = "none";
+          yesBtn.style.position = "fixed";
+          yesBtn.style.left = "50%";
+          yesBtn.style.top = "50%";
+          yesBtn.style.transform = "translate(-50%, -50%)";
+        }, 2000);
+      }, 1000);
+    }
+    
+  </script>
+</body>
+</html>
