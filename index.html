@@ -1,668 +1,597 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>PrintGlow — Custom Apparel & Merch</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        /* -----------------------
-         * THEME & RESET
-         * ----------------------- */
-        :root{
-            --bg:#070a0f; --ink:#e5f1ff; --muted:#9db3c7; --accent:#61e7ff;
-            --accent-2:#9a7bff; --danger:#ff6b6b; --card:#0f141d; --border:#1f2a3a;
-            --glow:0 0 24px #61e7ff55; --radius:18px;
-        }
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PrintGlow — Custom Apparel & Merch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    /* -----------------------
+     * THEME & RESET
+     * ----------------------- */
+    :root{
+      --bg:#070a0f; --ink:#e5f1ff; --muted:#9db3c7; --accent:#61e7ff;
+      --accent-2:#9a7bff; --danger:#ff6b6b; --card:#0f141d; --border:#1f2a3a;
+      --glow:0 0 24px #61e7ff55; --radius:18px;
+    }
 
-        *,*::before,*::after{box-sizing:border-box}
-        html{scroll-behavior:smooth}
-        body{
-            margin:0; font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            color:var(--ink); background:var(--bg);
-            overflow-x:hidden;
-        }
-        a{color:inherit; text-decoration:none}
-        img{display:block; max-width:100%; height:auto; object-fit: cover;}
-        button{font:inherit; background:none; border:none; color:inherit; cursor:pointer}
-        ::selection{background:#61e7ff33}
-        .hidden{display:none !important}
+    *,*::before,*::after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink); background:var(--bg);
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+    img{display:block; max-width:100%; height:auto; object-fit: cover;}
+    button{font:inherit; background:none; border:none; color:inherit; cursor:pointer}
+    ::selection{background:#61e7ff33}
+    .hidden{display:none !important}
 
-        /* -----------------------
-         * LANDING GATE & 3D CANVAS
-         * ----------------------- */
-        #three-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            z-index: 1;
-            background: var(--bg);
-        }
-        
-        #landing-gate {
-            position: fixed; inset: 0; z-index: 100;
-            background: transparent;
-            opacity: 1; transition: opacity .8s cubic-bezier(0.7, 0, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        #landing-gate.out { opacity: 0; pointer-events: none; }
-        
-        .gate-content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            color: var(--ink);
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeInUp 1s ease .5s forwards;
-            /* Added for 3D logo placement */
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-        }
+    /* -----------------------
+     * LANDING GATE & 3D CANVAS
+     * ----------------------- */
+    #three-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: 1;
+      background: var(--bg);
+    }
+    
+    #landing-gate {
+      position: fixed; inset: 0; z-index: 100;
+      background: transparent; /* Changed */
+      opacity: 1; transition: opacity .8s cubic-bezier(0.7, 0, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    #landing-gate.out { opacity: 0; pointer-events: none; }
+    
+    .gate-content {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: var(--ink);
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 1s ease .5s forwards;
+    }
 
-        @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
 
-        /* Hide the old static text logo */
-        #gate-logo {
-            display: none;
-        }
-        
-        /* New container for the 3D logo to keep the gate-content layout */
-        #three-logo-container {
-            position: relative;
-            width: 100%;
-            height: 15vw; /* Adjust height based on viewport width for responsiveness */
-            max-height: 200px;
-            min-height: 100px;
-            margin-bottom: 2.5rem;
-        }
-        
-        #three-logo-canvas {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
+    #gate-logo {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(3rem, 10vw, 6rem);
+        font-weight: 700;
+        margin-bottom: 2.5rem;
+        letter-spacing: -2px;
+        background: linear-gradient(45deg, var(--accent), var(--accent-2), var(--ink));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 40px #61e7ff44;
+    }
 
+    #gate-datetime {
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 0.9rem;
+        color: var(--muted);
+        margin-bottom: 2rem;
+    }
 
-        #gate-datetime {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-bottom: 2rem;
-        }
+    #gate-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2.5rem;
+    }
+    #gate-nav a {
+        font-family: 'Space Grotesk', sans-serif;
+        font-weight: 600;
+        letter-spacing: .1em;
+        text-transform: uppercase;
+        color: var(--muted);
+        transition: color .3s ease, letter-spacing .3s ease;
+        cursor: pointer;
+    }
+    #gate-nav a:hover { color: var(--ink); letter-spacing: .15em; }
 
-        #gate-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2.5rem;
-        }
-        #gate-nav a {
-            font-family: 'Space Grotesk', sans-serif;
-            font-weight: 600;
-            letter-spacing: .1em;
-            text-transform: uppercase;
-            color: var(--muted);
-            transition: color .3s ease, letter-spacing .3s ease;
-            cursor: pointer;
-        }
-        #gate-nav a:hover { color: var(--ink); letter-spacing: .15em; }
+    #gate-socials { display: flex; gap: 1.5rem; justify-content: center; }
+    #gate-socials a { opacity: 0.7; transition: opacity .3s ease, transform .3s ease; }
+    #gate-socials a:hover { opacity: 1; transform: scale(1.1); }
+    
+    /* -----------------------
+     * MAIN SITE WRAPPER
+     * ----------------------- */
+    #main-content { 
+        position: relative; 
+        z-index: 100; 
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 1s ease .5s;
+        background: radial-gradient(circle at 50% 0%, rgba(7, 10, 15, 0.5) 0%, rgba(7, 10, 15, 0.9) 80%, var(--bg) 100%);
+    }
+    #main-content.visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
 
-        #gate-socials { display: flex; gap: 1.5rem; justify-content: center; }
-        #gate-socials a { opacity: 0.7; transition: opacity .3s ease, transform .3s ease; }
-        #gate-socials a:hover { opacity: 1; transform: scale(1.1); }
-        
-        /* -----------------------
-         * MAIN SITE WRAPPER
-         * ----------------------- */
-        #main-content { 
-            position: relative; 
-            z-index: 100; 
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 1s ease .5s;
-            background: radial-gradient(circle at 50% 0%, rgba(7, 10, 15, 0.5) 0%, rgba(7, 10, 15, 0.9) 80%, var(--bg) 100%);
-        }
-        #main-content.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
+    /* -----------------------
+     * GLOBAL UTILITIES
+     * ----------------------- */
+    .container{width:min(1200px, 92%); margin-inline:auto}
+    .grid{display:grid; gap:1.5rem}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:.9rem 1.8rem; border-radius:999px; border:1px solid var(--border);
+      background:linear-gradient(180deg,#0f141d,#0b1017); color:var(--ink); box-shadow:var(--glow);
+      transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+      cursor:pointer; font-weight: 600; font-size: 1rem;
+    }
+    .btn:hover{transform:translateY(-2px); box-shadow:0 8px 30px #0008, var(--glow); border-color:#2a3a52}
+    .btn-pill{padding:.72rem 1.1rem; font-weight:600}
+    .btn-accent{background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#071017; border-color:transparent}
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
+    
+    /* -----------------------
+     * HEADER & NAVIGATION
+     * ----------------------- */
+    .header{
+        position:sticky; top:0; z-index:100;
+        backdrop-filter:saturate(160%) blur(8px);
+        background:#0a1018cc;
+        border-bottom:1px solid var(--border);
+    }
+    .header-inner{display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:.8rem 0}
+    .header-brand{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.4rem}
+    .header-nav{display:flex; align-items:center; gap:1rem; margin-left: auto;}
+    .header-actions { display: flex; align-items: center; gap: .5rem; }
 
-        /* -----------------------
-         * GLOBAL UTILITIES
-         * ----------------------- */
-        .container{width:min(1200px, 92%); margin-inline:auto}
-        .grid{display:grid; gap:1.5rem}
-        .btn{
-            display:inline-flex; align-items:center; justify-content:center; gap:.6rem; padding:.9rem 1.8rem; border-radius:999px; border:1px solid var(--border);
-            background:linear-gradient(180deg,#0f141d,#0b1017); color:var(--ink); box-shadow:var(--glow);
-            transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
-            cursor:pointer; font-weight: 600; font-size: 1rem;
-        }
-        .btn:hover{transform:translateY(-2px); box-shadow:0 8px 30px #0008, var(--glow); border-color:#2a3a52}
-        .btn-pill{padding:.72rem 1.1rem; font-weight:600}
-        .btn-accent{background:linear-gradient(135deg, var(--accent), var(--accent-2)); color:#071017; border-color:transparent}
-        .btn[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
-        
-        /* -----------------------
-         * HEADER & NAVIGATION
-         * ----------------------- */
-        .header{
-            position:sticky; top:0; z-index:100;
-            backdrop-filter:saturate(160%) blur(8px);
-            background:#0a1018cc;
-            border-bottom:1px solid var(--border);
-        }
-        .header-inner{display:flex; align-items:center; justify-content:space-between; gap:2rem; padding:.8rem 0}
-        .header-brand{font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.4rem}
-        .header-nav{display:flex; align-items:center; gap:1rem; margin-left: auto;}
-        .header-actions { display: flex; align-items: center; gap: .5rem; }
+    .header-nav-link {padding:.5rem .8rem; font-weight:600; border-radius:8px; transition: background .2s ease, color .2s ease; color: var(--muted); display: block;}
+    .header-nav-link:hover {color:var(--ink); background:#ffffff10}
+    .header-nav-link.active {color:var(--ink); background:#ffffff10}
 
-        .header-nav-link {padding:.5rem .8rem; font-weight:600; border-radius:8px; transition: background .2s ease, color .2s ease; color: var(--muted); display: block;}
-        .header-nav-link:hover {color:var(--ink); background:#ffffff10}
-        .header-nav-link.active {color:var(--ink); background:#ffffff10}
+    .dropdown { position: relative; padding-bottom: .5rem; margin-bottom: -.5rem; }
+    .dropdown-menu {
+        position: absolute;
+        top: calc(100% - .5rem);
+        left: 0;
+        margin-top: .5rem;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: .5rem;
+        min-width: 200px;
+        box-shadow: 0 10px 30px #00000055;
+        z-index: 101;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: opacity .2s ease, transform .2s ease;
+    }
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+    .dropdown-menu a {
+        display: block;
+        padding: .6rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        color: var(--muted);
+        transition: background .2s ease, color .2s ease;
+    }
+    .dropdown-menu a:hover {
+        background: #ffffff10;
+        color: var(--ink);
+    }
 
-        .dropdown { position: relative; padding-bottom: .5rem; margin-bottom: -.5rem; }
-        .dropdown-menu {
-            position: absolute;
-            top: calc(100% - .5rem);
-            left: 0;
-            margin-top: .5rem;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: .5rem;
-            min-width: 200px;
-            box-shadow: 0 10px 30px #00000055;
-            z-index: 101;
-            opacity: 0;
-            pointer-events: none;
-            transform: translateY(10px);
-            transition: opacity .2s ease, transform .2s ease;
-        }
-        .dropdown:hover .dropdown-menu {
-            opacity: 1;
-            pointer-events: auto;
-            transform: translateY(0);
-        }
-        .dropdown-menu a {
-            display: block;
-            padding: .6rem 1rem;
-            border-radius: 8px;
-            font-weight: 600;
-            color: var(--muted);
-            transition: background .2s ease, color .2s ease;
-        }
-        .dropdown-menu a:hover {
-            background: #ffffff10;
-            color: var(--ink);
-        }
+    #cart-btn{position:relative}
+    #cart-count{
+        position:absolute; top:-4px; right:-8px; background:var(--accent); color:var(--bg);
+        font-size:.7rem; font-weight:700; width:18px; height:18px;
+        border-radius:50%; display:grid; place-items:center;
+        transform: scale(0); transition: transform .2s ease;
+    }
+    #cart-count.visible{transform:scale(1)}
 
-        #cart-btn{position:relative}
-        #cart-count{
-            position:absolute; top:-4px; right:-8px; background:var(--accent); color:var(--bg);
-            font-size:.7rem; font-weight:700; width:18px; height:18px;
-            border-radius:50%; display:grid; place-items:center;
-            transform: scale(0); transition: transform .2s ease;
-        }
-        #cart-count.visible{transform:scale(1)}
+    /* -----------------------
+     * MAIN CONTENT & PAGES
+     * ----------------------- */
+    main > section, .page-section {padding: clamp(48px, 8vw, 96px) 0;}
+    .section-title{font-family:'Space Grotesk', sans-serif; font-size:clamp(2.2rem,4vw,3rem); margin-bottom: .5rem; }
+    .section-sub{color:var(--muted); margin:.4rem 0 1.5rem; max-width:60ch; line-height:1.7}
+    .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:clamp(1.5rem, 5vw, 2rem); box-shadow:0 10px 34px #0007}
+    
+    /* Form Fields */
+    .field{display:grid; gap:8px; margin-bottom:1.2rem}
+    .field label{font-weight:600; font-size: 0.9rem;}
+    .field input, .field textarea, .field select {
+      background:#0c131d; border:1px solid #223042; color:var(--ink); border-radius:12px; padding:.8rem .9rem; outline:none; font:inherit; width:100%;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {border-color:#34507a; box-shadow:0 0 0 3px #61e7ff22}
+    
+    /* -----------------------
+     * NEW SHOP PAGE DESIGN
+     * ----------------------- */
+    .hero {
+      height: 70vh;
+      display: flex;
+      align-items: flex-end;
+      padding: 4rem;
+      border-radius: var(--radius);
+      background-size: cover;
+      background-position: center;
+      margin-bottom: clamp(48px, 8vw, 96px);
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.8) 100%);
+      border-radius: var(--radius);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      margin: 0 0 1rem;
+      line-height: 1.1;
+      max-width: 15ch;
+    }
 
-        /* -----------------------
-         * MAIN CONTENT & PAGES
-         * ----------------------- */
-        main > section, .page-section {padding: clamp(48px, 8vw, 96px) 0;}
-        .section-title{font-family:'Space Grotesk', sans-serif; font-size:clamp(2.2rem,4vw,3rem); margin-bottom: .5rem; }
-        .section-sub{color:var(--muted); margin:.4rem 0 1.5rem; max-width:60ch; line-height:1.7}
-        .panel{background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:clamp(1.5rem, 5vw, 2rem); box-shadow:0 10px 34px #0007}
-        
-        /* Form Fields */
-        .field{display:grid; gap:8px; margin-bottom:1.2rem}
-        .field label{font-weight:600; font-size: 0.9rem;}
-        .field input, .field textarea, .field select {
-            background:#0c131d; border:1px solid #223042; color:var(--ink); border-radius:12px; padding:.8rem .9rem; outline:none; font:inherit; width:100%;
-        }
-        .field input:focus, .field textarea:focus, .field select:focus {border-color:#34507a; box-shadow:0 0 0 3px #61e7ff22}
-        
-        /* -----------------------
-         * NEW SHOP PAGE DESIGN
-         * ----------------------- */
-        .hero {
-            height: 70vh;
-            display: flex;
-            align-items: flex-end;
-            padding: 4rem;
-            border-radius: var(--radius);
-            background-size: cover;
-            background-position: center;
-            margin-bottom: clamp(48px, 8vw, 96px);
-            position: relative;
-        }
-        .hero::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(180deg, transparent 50%, rgba(0,0,0,0.8) 100%);
-            border-radius: var(--radius);
-        }
-        .hero-content {
-            position: relative;
-            z-index: 2;
-        }
-        .hero-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: clamp(2.5rem, 5vw, 4.5rem);
-            margin: 0 0 1rem;
-            line-height: 1.1;
-            max-width: 15ch;
-        }
+    .shop-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
 
-        .shop-section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
+    .items-grid{grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))}
+    .card{
+      background:linear-gradient(180deg, #0e1420d0, #0b111ad0);
+      backdrop-filter: blur(10px);
+      border:1px solid var(--border); border-radius:var(--radius);
+      overflow:hidden; box-shadow:0 8px 30px #0006; transition:transform .25s ease, box-shadow .25s ease; cursor: pointer;
+    }
+    .card:hover { 
+        transform: scale(1.05) translateY(-8px); 
+        box-shadow: 0 16px 40px #00000099, 0 0 20px #61e7ff33; 
+    }
+    
+    /* Customize Page */
+    .customizer-layout{display:grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: flex-start;}
+    .customizer-main { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
 
-        .items-grid{grid-template-columns: repeat(auto-fill, minmax(280px, 1fr))}
-        .card{
-            background:linear-gradient(180deg, #0e1420d0, #0b111ad0);
-            backdrop-filter: blur(10px);
-            border:1px solid var(--border); border-radius:var(--radius);
-            overflow:hidden; box-shadow:0 8px 30px #0006; transition:transform .25s ease, box-shadow .25s ease; cursor: pointer;
-        }
-        .card:hover { 
-            transform: scale(1.05) translateY(-8px); 
-            box-shadow: 0 16px 40px #00000099, 0 0 20px #61e7ff33; 
-        }
-        
-        /* Customize Page */
-        .customizer-layout{display:grid; grid-template-columns: 300px 1fr; gap: 2rem; align-items: flex-start;}
-        .customizer-main { display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; }
+    /* Bulk Orders Page */
+    .bulk-layout{display:grid; grid-template-columns: 1fr 420px; gap: 2rem; align-items: flex-start;}
+    #bulk-quote-panel { position: sticky; top: 100px; }
+    #bulk-quote-list { max-height: 40vh; overflow-y: auto; margin-bottom: 1rem; padding-right: .5rem; }
+    .quote-item { display: grid; grid-template-columns: 60px 1fr auto; gap: 1rem; align-items: center; padding: .8rem 0; border-bottom: 1px solid var(--border); }
+    .quote-item:first-child { padding-top: 0; }
+    .quote-item-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--bg); }
+    .quote-item-remove { font-size: .8rem; color: var(--danger); opacity: .7; }
+    
+    /* Modals */
+    .modal-overlay{
+      position:fixed; inset:0; z-index:1000;
+      background: #000000a0; backdrop-filter:blur(5px);
+      display:grid; place-items:center;
+      opacity:0; pointer-events:none; transition: opacity .3s ease;
+    }
+    .modal-overlay.visible{opacity:1; pointer-events:auto}
+    .modal-content{
+      background:var(--card); border-radius:var(--radius); border:1px solid var(--border);
+      padding:2rem; box-shadow:0 20px 60px #00000088;
+      width:min(600px, 95vw);
+      transform:scale(0.95); transition: transform .3s ease;
+    }
+    .modal-overlay.visible .modal-content{transform:scale(1)}
+    .modal-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem}
+    .modal-title{font-family:'Space Grotesk'; font-size:1.5rem; margin:0}
+    .modal-close-btn{font-size:1.5rem; line-height:1; color:var(--muted); opacity:0.7; transition:opacity .2s ease, transform .2s ease}
+    
+    /* Product Detail Modal */
+    #product-detail-modal .modal-content { width: min(800px, 95vw); }
+    .product-detail-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .product-detail-img { width: 100%; aspect-ratio: 1/1; border-radius: var(--radius); object-fit: cover; background: #0c121a; }
+    .size-selector { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+    .size-btn {
+      border: 1px solid var(--border); border-radius: 8px; min-width: 44px; height: 44px;
+      font-weight: 600; transition: all .2s ease;
+    }
+    .size-btn:hover { background: #ffffff10; border-color: #ffffff33; }
+    .size-btn.selected { background: var(--ink); color: var(--bg); border-color: var(--ink); }
 
-        /* Bulk Orders Page */
-        .bulk-layout{display:grid; grid-template-columns: 1fr 420px; gap: 2rem; align-items: flex-start;}
-        #bulk-quote-panel { position: sticky; top: 100px; }
-        #bulk-quote-list { max-height: 40vh; overflow-y: auto; margin-bottom: 1rem; padding-right: .5rem; }
-        .quote-item { display: grid; grid-template-columns: 60px 1fr auto; gap: 1rem; align-items: center; padding: .8rem 0; border-bottom: 1px solid var(--border); }
-        .quote-item:first-child { padding-top: 0; }
-        .quote-item-img { width: 60px; height: 60px; border-radius: 8px; object-fit: cover; background: var(--bg); }
-        .quote-item-remove { font-size: .8rem; color: var(--danger); opacity: .7; }
-        
-        /* Modals */
-        .modal-overlay{
-            position:fixed; inset:0; z-index:1000;
-            background: #000000a0; backdrop-filter:blur(5px);
-            display:grid; place-items:center;
-            opacity:0; pointer-events:none; transition: opacity .3s ease;
-        }
-        .modal-overlay.visible{opacity:1; pointer-events:auto}
-        .modal-content{
-            background:var(--card); border-radius:var(--radius); border:1px solid var(--border);
-            padding:2rem; box-shadow:0 20px 60px #00000088;
-            width:min(600px, 95vw);
-            transform:scale(0.95); transition: transform .3s ease;
-        }
-        .modal-overlay.visible .modal-content{transform:scale(1)}
-        .modal-header{display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem}
-        .modal-title{font-family:'Space Grotesk'; font-size:1.5rem; margin:0}
-        .modal-close-btn{font-size:1.5rem; line-height:1; color:var(--muted); opacity:0.7; transition:opacity .2s ease, transform .2s ease}
-        
-        /* Product Detail Modal */
-        #product-detail-modal .modal-content { width: min(800px, 95vw); }
-        .product-detail-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
-        .product-detail-img { width: 100%; aspect-ratio: 1/1; border-radius: var(--radius); object-fit: cover; background: #0c121a; }
-        .size-selector { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
-        .size-btn {
-            border: 1px solid var(--border); border-radius: 8px; min-width: 44px; height: 44px;
-            font-weight: 600; transition: all .2s ease;
-        }
-        .size-btn:hover { background: #ffffff10; border-color: #ffffff33; }
-        .size-btn.selected { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    /* Cart */
+    #cart-items{max-height: 50vh; overflow-y:auto; padding-right:.5rem; margin-bottom:1.5rem}
+    .cart-item{display:grid; grid-template-columns: 80px 1fr auto; gap:1rem; align-items:center; border-bottom:1px solid var(--border); padding:1rem 0}
+    .cart-item-img{width:80px; height:80px; border-radius:12px; background:var(--bg); object-fit:cover}
 
-        /* Cart */
-        #cart-items{max-height: 50vh; overflow-y:auto; padding-right:.5rem; margin-bottom:1.5rem}
-        .cart-item{display:grid; grid-template-columns: 80px 1fr auto; gap:1rem; align-items:center; border-bottom:1px solid var(--border); padding:1rem 0}
-        .cart-item-img{width:80px; height:80px; border-radius:12px; background:var(--bg); object-fit:cover}
+    /* Checkout */
+    #checkout-modal .modal-content { width: min(800px, 95vw); }
+    .checkout-grid { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
+    .checkout-summary { border-left: 1px solid var(--border); padding-left: 2rem; }
+    .checkout-step { animation: fadeIn .4s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Checkout */
-        #checkout-modal .modal-content { width: min(800px, 95vw); }
-        .checkout-grid { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
-        .checkout-summary { border-left: 1px solid var(--border); padding-left: 2rem; }
-        .checkout-step { animation: fadeIn .4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    /* NOTIFICATION TOASTS */
+    #notification-container{position:fixed; bottom:20px; right:20px; z-index:2000; display:flex; flex-direction:column; gap:10px}
+    .toast{ background:var(--card); border:1px solid var(--border); padding:1rem 1.2rem; border-radius:12px; box-shadow:0 10px 30px #0008; display:flex; align-items:center; gap:1rem; opacity:0; transform:translateX(20px); animation:toast-in .4s ease forwards; }
+    @keyframes toast-in {to {opacity:1; transform:none}}
 
-        /* NOTIFICATION TOASTS */
-        #notification-container{position:fixed; bottom:20px; right:20px; z-index:2000; display:flex; flex-direction:column; gap:10px}
-        .toast{ background:var(--card); border:1px solid var(--border); padding:1rem 1.2rem; border-radius:12px; box-shadow:0 10px 30px #0008; display:flex; align-items:center; gap:1rem; opacity:0; transform:translateX(20px); animation:toast-in .4s ease forwards; }
-        @keyframes toast-in {to {opacity:1; transform:none}}
-
-        /* Mobile */
-        @media (max-width: 1024px){
-            .bulk-layout, .checkout-grid, .customizer-layout, .customizer-main, .product-detail-layout {grid-template-columns:1fr}
-            #bulk-quote-panel { position: static; margin-top: 2rem; }
-            .checkout-summary { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 2rem; margin-top: 2rem; }
-            .hero { height: 60vh; padding: 2rem; }
-            #three-logo-container { height: 20vw; max-height: 150px; }
-        }
-        @media (max-width: 768px) {
-            .header-nav { display: none; } /* Simplified for demo, a real site needs a hamburger menu */
-            .header-inner { gap: 1rem; }
-        }
-    </style>
+    /* Mobile */
+    @media (max-width: 1024px){
+      .bulk-layout, .checkout-grid, .customizer-layout, .customizer-main, .product-detail-layout {grid-template-columns:1fr}
+      #bulk-quote-panel { position: static; margin-top: 2rem; }
+      .checkout-summary { border-left: none; border-top: 1px solid var(--border); padding-left: 0; padding-top: 2rem; margin-top: 2rem; }
+      .hero { height: 60vh; padding: 2rem; }
+    }
+    @media (max-width: 768px) {
+        .header-nav { display: none; } /* Simplified for demo, a real site needs a hamburger menu */
+        .header-inner { gap: 1rem; }
+    }
+  </style>
 </head>
 <body>
-    
-    <div id="three-canvas"></div>
-    
-    <div id="landing-gate">
-        <div class="gate-content">
-            <h1 id="gate-logo">PrintGlow</h1>
-            <div id="three-logo-container">
-                <canvas id="three-logo-canvas"></canvas>
+  
+  <div id="three-canvas"></div>
+  
+  <div id="landing-gate">
+    <div class="gate-content">
+        <h1 id="gate-logo">PrintGlow</h1>
+        <div id="gate-datetime"></div>
+        <nav id="gate-nav">
+            <a href="#shop" class="enter-site">Shop</a>
+            <a href="#lookbook" class="enter-site">Lookbook</a>
+            <a href="#support" class="enter-site">Contact</a>
+            <a href="#policy" class="enter-site">Return Policy</a>
+        </nav>
+        <div id="gate-socials">
+            <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
+            <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
+            <a href="#" aria-label="Discord"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.54 0c1.356 0 2.46 1.104 2.46 2.472v21.528l-2.58-2.28-1.452-1.344-1.536-1.428.636 2.22h-13.74c-1.356 0-2.46-1.104-2.46-2.472v-16.224c0-1.368 1.104-2.472 2.46-2.472h16.224zm-4.632 14.652c0 .816-.672.816-.672.816l-1.056.168c-.144.408-.288.78-.48 1.14-.552.9-1.2 1.236-1.872 1.236-.672 0-1.32-.336-1.872-1.236-.192-.36-.336-.732-.48-1.14l-1.056-.168c-.672 0-.672-.816-.672-.816s-.024-.048.024-.072c1.08-.636 1.776-1.536 1.776-1.536l-.12.144c-2.424-1.2-3.144-3.324-3.144-3.324s.432-1.032 1.8-1.032c1.368 0 1.8 1.032 1.8 1.032s-.72 2.124-3.12 3.3l.144-.144s.696.9 1.776 1.536c0 .024.048.072.048.072zm.288-5.832c-.528 0-.96.48-.96.984s.432.984.96.984c.528 0 .96-.48.96-.984s-.432-.984-.96-.984zm-4.728 0c-.528 0-.96.48-.96.984s.432.984.96.984c.528 0 .96-.48.96-.984s-.432-.984-.96-.984z"/></svg></a>
+        </div>
+    </div>
+  </div>
+  
+  <div id="main-content">
+    <header class="header"><div class="container header-inner">
+        <a href="#shop" class="header-brand page-link">PrintGlow</a>
+        <nav class="header-nav">
+          <div class="dropdown">
+            <a href="#shop" class="header-nav-link page-link active">Shop</a>
+            <div class="dropdown-menu" id="category-dropdown">
+              <!-- Categories will be injected here by JS -->
             </div>
-            
-            <div id="gate-datetime"></div>
-            <nav id="gate-nav">
-                <a href="#shop" class="enter-site">Shop</a>
-                <a href="#lookbook" class="enter-site">Lookbook</a>
-                <a href="#support" class="enter-site">Contact</a>
-                <a href="#policy" class="enter-site">Return Policy</a>
-            </nav>
-            <div id="gate-socials">
-                <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg></a>
-                <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path></svg></a>
-                <a href="#" aria-label="Discord"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.54 0c1.356 0 2.46 1.104 2.46 2.472v21.528l-2.58-2.28-1.452-1.344-1.536-1.428.636 2.22h-13.74c-1.356 0-2.46-1.104-2.46-2.472v-16.224c0-1.368 1.104-2.472 2.46-2.472h16.224zm-4.632 14.652c0 .816-.672.816-.672.816l-1.056.168c-.144.408-.288.78-.48 1.14-.552.9-1.2 1.236-1.872 1.236-.672 0-1.32-.336-1.872-1.236-.192-.36-.336-.732-.48-1.14l-1.056-.168c-.672 0-.672-.816-.672-.816s-.024-.048.024-.072c1.08-.636 1.776-1.536 1.776-1.536l-.12.144c-2.424-1.2-3.144-3.324-3.144-3.324s.432-1.032 1.8-1.032c1.368 0 1.8 1.032 1.8 1.032s-.72 2.124-3.12 3.3l.144-.144s.696.9 1.776 1.536c0 .024.048.072.048.072zm.288-5.832c-.528 0-.96.48-.96.984s.432.984.96.984c.528 0 .96-.48.96-.984s-.432-.984-.96-.984zm-4.728 0c-.528 0-.96.48-.96.984s.432.984.96.984c.528 0 .96-.48.96-.984s-.432-.984-.96-.984z"/></svg></a>
+          </div>
+          <a href="#customize" class="header-nav-link page-link">Customize</a>
+          <a href="#bulk" class="header-nav-link page-link">Bulk Orders</a>
+          <a href="#support" class="header-nav-link page-link">Support</a>
+        </nav>
+        <div class="header-actions">
+          <button id="cart-btn" class="btn btn-ghost">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span id="cart-count">0</span>
+          </button>
+        </div>
+    </div></header>
+
+    <main>
+      <!-- SHOP PAGE -->
+      <section id="shop">
+        <div id="shop-main-view">
+          <div class="container">
+            <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1574201635302-388dd78a4664?q=80&w=2070&auto=format&fit=crop');">
+              <div class="hero-content">
+                <h1 class="hero-title">Beyond the Fabric</h1>
+                <button class="btn btn-accent" id="hero-cta-btn">Explore New Arrivals</button>
+              </div>
+            </div>
+          </div>
+          <div class="container page-section" style="padding-top: 0;">
+            <div class="shop-section-header">
+              <h2 class="section-title">Trending Now</h2>
+              <button class="btn" id="view-all-trending-btn">View All</button>
+            </div>
+            <div class="grid items-grid" id="trending-items-container"></div>
+          </div>
+        </div>
+
+        <div id="all-products-view" class="hidden">
+          <div class="container">
+            <h2 class="section-title" id="all-products-title">All Products</h2>
+            <div id="filter-pills-container" style="display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 2rem;"></div>
+            <div class="grid items-grid" id="items-grid-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CUSTOMIZE PAGE -->
+      <section id="customize" class="hidden"><div class="container">
+        <h2 class="section-title">Design Studio</h2>
+        <p class="section-sub">Create a single custom piece. For larger orders, use our Bulk Quote Builder.</p>
+        <div class="customizer-layout">
+            <div class="panel">
+                <h3>1. Select Product</h3>
+                <p class="section-sub" style="font-size: .9rem; margin-top: 0; margin-bottom: 1rem;">Choose a base product to customize.</p>
+                <div id="base-product-list" style="display: grid; gap: 1rem;"></div>
+            </div>
+            <div class="customizer-main">
+                <div style="position: relative;">
+                    <div style="position:relative; background: #0c121a; border-radius: var(--radius); overflow:hidden; border: 1px solid var(--border); aspect-ratio: 1/1;">
+                        <canvas id="tshirt-canvas" width="800" height="800"></canvas>
+                    </div>
+                </div>
+                <div class="panel">
+                    <h3>2. Customize</h3>
+                    <div class="field"><label>Upload Image</label><input type="file" id="image-uploader" accept="image/*"></div>
+                    <div class="field"><label>Scale</label><input type="range" id="image-scale" min="0.1" max="2" value="0.5" step="0.01"></div>
+                    <div class="field"><label>Rotation</label><input type="range" id="image-rotation" min="-180" max="180" value="0" step="1"></div>
+                    <button id="add-custom-to-cart-btn" class="btn btn-accent" style="width:100%">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+      </div></section>
+
+      <!-- BULK ORDERS PAGE -->
+      <section id="bulk" class="hidden"><div class="container">
+          <h2 class="section-title">Bulk Quote Builder</h2>
+          <p class="section-sub">Design multiple items and add them to your quote request. Perfect for complex orders.</p>
+          <div class="bulk-layout">
+            <div id="bulk-customizer-panel" class="panel">
+                <h3>1. Design an Item</h3>
+                <div class="field"><label>Base Product</label><select id="bulk-base-product-select"></select></div>
+                <div style="background: #0c121a; border-radius: var(--radius); overflow:hidden; border: 1px solid var(--border); aspect-ratio: 1/1; margin-bottom:1rem;">
+                    <canvas id="bulk-tshirt-canvas" width="800" height="800"></canvas>
+                </div>
+                <div class="field"><label>Upload Artwork</label><input type="file" id="bulk-image-uploader" accept="image/*"></div>
+                <div class="field"><label>Quantity</label><input type="number" id="bulk-quantity-input" min="1" value="24" placeholder="Min 24"></div>
+                <button id="add-to-quote-btn" class="btn btn-accent" style="width:100%">Add Item to Quote</button>
+            </div>
+            <div id="bulk-quote-panel" class="panel">
+                <h3>2. Your Quote Request</h3>
+                <div id="bulk-quote-list"><p>Your quote is empty.</p></div>
+                <form id="bulk-order-form">
+                    <h3 style="margin-top:2rem;">3. Your Information</h3>
+                    <label class="field">Name<input required placeholder="Your Name" /></label>
+                    <label class="field">Email<input type="email" required placeholder="your@email.com" /></label>
+                    <button class="btn btn-accent" type="submit" style="width:100%">Submit Full Quote Request</button>
+                </form>
+            </div>
+          </div>
+      </div></section>
+
+      <!-- SUPPORT PAGE -->
+      <section id="support" class="hidden"><div class="container">
+        <h2 class="section-title">Support Center</h2>
+        <p class="section-sub">Find answers to common questions or get in touch with our team.</p>
+        <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items:flex-start">
+            <div>
+                <h3 style="margin-top:0">Frequently Asked Questions</h3>
+                <div style="display:grid; gap:1rem">
+                    <details style="background:#0e1420; border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem"><summary style="cursor:pointer; list-style:none; font-weight:600">What’s the turnaround time?</summary><p style="color:var(--muted); margin-top:.8rem">Retail orders ship in 3-5 business days. Bulk orders ship in 5-7 business days after mockup approval.</p></details>
+                    <details style="background:#0e1420; border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem"><summary style="cursor:pointer; list-style:none; font-weight:600">What file types do you accept?</summary><p style="color:var(--muted); margin-top:.8rem">Vector files (AI, SVG) are preferred. We also accept high-resolution PNGs (300 DPI) with a transparent background.</p></details>
+                </div>
+            </div>
+            <form id="support-form" class="panel">
+              <h3 style="margin-top:0;">Contact Support</h3>
+              <p class="section-sub" style="margin-top:0; margin-bottom:1.5rem">Email us at <a href="mailto:support@printglow.com" style="color:var(--accent)">support@printglow.com</a> or use the form.</p>
+                <label class="field">Name<input required/></label>
+                <label class="field">Email<input type="email" required/></label>
+                <label class="field">Message<textarea rows="5" required></textarea></label>
+                <button class="btn btn-accent" type="submit" style="width:100%">Send Message</button>
+            </form>
+        </div>
+      </div></section>
+      
+      <!-- OTHER PLACEHOLDER PAGES -->
+      <section id="lookbook" class="hidden"><div class="container"><h2 class="section-title">Lookbook</h2></div></section>
+      <section id="contact" class="hidden"><div class="container"><h2 class="section-title">Contact</h2></div></section>
+      <section id="policy" class="hidden"><div class="container"><h2 class="section-title">Refund Policy</h2></div></section>
+    </main>
+
+    <footer><div class="container" style="display:flex; justify-content:space-between; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border); color: var(--muted);">
+        <div class="credits">© <span id="year"></span> PrintGlow — Quality Apparel</div>
+    </div></footer>
+    
+    <!-- MODALS -->
+    <div class="modal-overlay" id="cart-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Your Cart</h3>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div id="cart-items"></div>
+            <div id="cart-footer" class="hidden">
+                <div id="cart-total" style="font-size:1.4rem; font-weight:700; margin-bottom:1rem"></div>
+                <button class="btn btn-accent" id="proceed-to-checkout-btn">Proceed to Checkout</button>
             </div>
         </div>
     </div>
-    
-    <div id="main-content">
-        <header class="header"><div class="container header-inner">
-            <a href="#shop" class="header-brand page-link">PrintGlow</a>
-            <nav class="header-nav">
-                <div class="dropdown">
-                    <a href="#shop" class="header-nav-link page-link active">Shop</a>
-                    <div class="dropdown-menu" id="category-dropdown">
-                        </div>
-                </div>
-                <a href="#customize" class="header-nav-link page-link">Customize</a>
-                <a href="#bulk" class="header-nav-link page-link">Bulk Orders</a>
-                <a href="#support" class="header-nav-link page-link">Support</a>
-            </nav>
-            <div class="header-actions">
-                <button id="cart-btn" class="btn btn-ghost">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
-                    <span id="cart-count">0</span>
-                </button>
+
+    <div class="modal-overlay" id="product-detail-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="product-detail-title">Product Details</h3>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
             </div>
-        </div></header>
+            <div id="product-detail-content"></div>
+        </div>
+    </div>
 
-        <main>
-            <section id="shop">
-                <div id="shop-main-view">
-                    <div class="container">
-                        <div class="hero" style="background-image: url('https://images.unsplash.com/photo-1574201635302-388dd78a4664?q=80&w=2070&auto=format&fit=crop');">
-                            <div class="hero-content">
-                                <h1 class="hero-title">Beyond the Fabric</h1>
-                                <button class="btn btn-accent" id="hero-cta-btn">Explore New Arrivals</button>
+    <div class="modal-overlay" id="checkout-modal">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h3 class="modal-title" id="checkout-title">Checkout</h3>
+                <button class="modal-close-btn" data-close-modal>&times;</button>
+            </div>
+            <div class="checkout-grid">
+                <div id="checkout-steps">
+                    <!-- Step 1: Shipping -->
+                    <div id="checkout-step-shipping" class="checkout-step">
+                        <h4>Shipping Information</h4>
+                        <form id="shipping-form">
+                            <label class="field">Full Name<input required /></label>
+                            <label class="field">Address<input required /></label>
+                            <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 1rem">
+                                <label class="field">City<input required /></label>
+                                <label class="field">ZIP Code<input required /></label>
                             </div>
-                        </div>
-                    </div>
-                    <div class="container page-section" style="padding-top: 0;">
-                        <div class="shop-section-header">
-                            <h2 class="section-title">Trending Now</h2>
-                            <button class="btn" id="view-all-trending-btn">View All</button>
-                        </div>
-                        <div class="grid items-grid" id="trending-items-container"></div>
-                    </div>
-                </div>
-
-                <div id="all-products-view" class="hidden">
-                    <div class="container">
-                        <h2 class="section-title" id="all-products-title">All Products</h2>
-                        <div id="filter-pills-container" style="display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 2rem;"></div>
-                        <div class="grid items-grid" id="items-grid-container"></div>
-                    </div>
-                </div>
-            </section>
-
-            <section id="customize" class="hidden"><div class="container">
-                <h2 class="section-title">Design Studio</h2>
-                <p class="section-sub">Create a single custom piece. For larger orders, use our Bulk Quote Builder.</p>
-                <div class="customizer-layout">
-                    <div class="panel">
-                        <h3>1. Select Product</h3>
-                        <p class="section-sub" style="font-size: .9rem; margin-top: 0; margin-bottom: 1rem;">Choose a base product to customize.</p>
-                        <div id="base-product-list" style="display: grid; gap: 1rem;"></div>
-                    </div>
-                    <div class="customizer-main">
-                        <div style="position: relative;">
-                            <div style="position:relative; background: #0c121a; border-radius: var(--radius); overflow:hidden; border: 1px solid var(--border); aspect-ratio: 1/1;">
-                                <canvas id="tshirt-canvas" width="800" height="800"></canvas>
-                            </div>
-                        </div>
-                        <div class="panel">
-                            <h3>2. Customize</h3>
-                            <div class="field"><label>Upload Image</label><input type="file" id="image-uploader" accept="image/*"></div>
-                            <div class="field"><label>Scale</label><input type="range" id="image-scale" min="0.1" max="2" value="0.5" step="0.01"></div>
-                            <div class="field"><label>Rotation</label><input type="range" id="image-rotation" min="-180" max="180" value="0" step="1"></div>
-                            <button id="add-custom-to-cart-btn" class="btn btn-accent" style="width:100%">Add to Cart</button>
-                        </div>
-                    </div>
-                </div>
-            </div></section>
-
-            <section id="bulk" class="hidden"><div class="container">
-                <h2 class="section-title">Bulk Quote Builder</h2>
-                <p class="section-sub">Design multiple items and add them to your quote request. Perfect for complex orders.</p>
-                <div class="bulk-layout">
-                    <div id="bulk-customizer-panel" class="panel">
-                        <h3>1. Design an Item</h3>
-                        <div class="field"><label>Base Product</label><select id="bulk-base-product-select"></select></div>
-                        <div style="background: #0c121a; border-radius: var(--radius); overflow:hidden; border: 1px solid var(--border); aspect-ratio: 1/1; margin-bottom:1rem;">
-                            <canvas id="bulk-tshirt-canvas" width="800" height="800"></canvas>
-                        </div>
-                        <div class="field"><label>Upload Artwork</label><input type="file" id="bulk-image-uploader" accept="image/*"></div>
-                        <div class="field"><label>Quantity</label><input type="number" id="bulk-quantity-input" min="1" value="24" placeholder="Min 24"></div>
-                        <button id="add-to-quote-btn" class="btn btn-accent" style="width:100%">Add Item to Quote</button>
-                    </div>
-                    <div id="bulk-quote-panel" class="panel">
-                        <h3>2. Your Quote Request</h3>
-                        <div id="bulk-quote-list"><p>Your quote is empty.</p></div>
-                        <form id="bulk-order-form">
-                            <h3 style="margin-top:2rem;">3. Your Information</h3>
-                            <label class="field">Name<input required placeholder="Your Name" /></label>
-                            <label class="field">Email<input type="email" required placeholder="your@email.com" /></label>
-                            <button class="btn btn-accent" type="submit" style="width:100%">Submit Full Quote Request</button>
+                            <button type="submit" class="btn btn-accent" style="width:100%">Continue to Payment</button>
                         </form>
                     </div>
-                </div>
-            </div></section>
-
-            <section id="support" class="hidden"><div class="container">
-                <h2 class="section-title">Support Center</h2>
-                <p class="section-sub">Find answers to common questions or get in touch with our team.</p>
-                <div style="display:grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items:flex-start">
-                    <div>
-                        <h3 style="margin-top:0">Frequently Asked Questions</h3>
-                        <div style="display:grid; gap:1rem">
-                            <details style="background:#0e1420; border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem"><summary style="cursor:pointer; list-style:none; font-weight:600">What’s the turnaround time?</summary><p style="color:var(--muted); margin-top:.8rem">Retail orders ship in 3-5 business days. Bulk orders ship in 5-7 business days after mockup approval.</p></details>
-                            <details style="background:#0e1420; border:1px solid var(--border); border-radius:12px; padding:1rem 1.2rem"><summary style="cursor:pointer; list-style:none; font-weight:600">What file types do you accept?</summary><p style="color:var(--muted); margin-top:.8rem">Vector files (AI, SVG) are preferred. We also accept high-resolution PNGs (300 DPI) with a transparent background.</p></details>
-                        </div>
+                    <!-- Step 2: Payment -->
+                    <div id="checkout-step-payment" class="checkout-step hidden">
+                        <h4>Payment Details</h4>
+                        <form id="payment-form">
+                            <label class="field">Card Number<input placeholder="**** **** **** ****" required /></label>
+                            <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+                                <label class="field">Expiry (MM/YY)<input placeholder="MM/YY" required /></label>
+                                <label class="field">CVC<input placeholder="123" required /></label>
+                            </div>
+                            <button type="submit" class="btn btn-accent" style="width:100%">Place Order</button>
+                         </form>
                     </div>
-                    <form id="support-form" class="panel">
-                        <h3 style="margin-top:0;">Contact Support</h3>
-                        <p class="section-sub" style="margin-top:0; margin-bottom:1.5rem">Email us at <a href="mailto:support@printglow.com" style="color:var(--accent)">support@printglow.com</a> or use the form.</p>
-                        <label class="field">Name<input required/></label>
-                        <label class="field">Email<input type="email" required/></label>
-                        <label class="field">Message<textarea rows="5" required></textarea></label>
-                        <button class="btn btn-accent" type="submit" style="width:100%">Send Message</button>
-                    </form>
+                    <!-- Step 3: Confirmation -->
+                    <div id="checkout-step-confirmation" class="checkout-step hidden" style="text-align:center;">
+                        <h2 style="color:var(--accent)">Thank You!</h2>
+                        <p>Your order has been placed successfully.</p>
+                        <p>A confirmation email has been sent (not really!). Your order number is <strong id="order-number"></strong>.</p>
+                        <button class="btn" data-close-modal>Close</button>
+                    </div>
                 </div>
-            </div></section>
-            
-            <section id="lookbook" class="hidden"><div class="container"><h2 class="section-title">Lookbook</h2></div></section>
-            <section id="contact" class="hidden"><div class="container"><h2 class="section-title">Contact</h2></div></section>
-            <section id="policy" class="hidden"><div class="container"><h2 class="section-title">Refund Policy</h2></div></section>
-        </main>
-
-        <footer><div class="container" style="display:flex; justify-content:space-between; padding: 2rem 0; margin-top: 2rem; border-top: 1px solid var(--border); color: var(--muted);">
-            <div class="credits">© <span id="year"></span> PrintGlow — Quality Apparel</div>
-        </div></footer>
-        
-        <div class="modal-overlay" id="cart-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title">Your Cart</h3>
-                    <button class="modal-close-btn" data-close-modal>&times;</button>
-                </div>
-                <div id="cart-items"></div>
-                <div id="cart-footer" class="hidden">
-                    <div id="cart-total" style="font-size:1.4rem; font-weight:700; margin-bottom:1rem"></div>
-                    <button class="btn btn-accent" id="proceed-to-checkout-btn">Proceed to Checkout</button>
+                <div class="checkout-summary">
+                    <h4>Order Summary</h4>
+                    <div id="checkout-summary-items"></div>
                 </div>
             </div>
         </div>
-
-        <div class="modal-overlay" id="product-detail-modal">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h3 class="modal-title" id="product-detail-title">Product Details</h3>
-                    <button class="modal-close-btn" data-close-modal>&times;</button>
-                </div>
-                <div id="product-detail-content"></div>
-            </div>
-        </div>
-
-        <div class="modal-overlay" id="checkout-modal">
-            <div class="modal-content">
-                 <div class="modal-header">
-                    <h3 class="modal-title" id="checkout-title">Checkout</h3>
-                    <button class="modal-close-btn" data-close-modal>&times;</button>
-                </div>
-                <div class="checkout-grid">
-                    <div id="checkout-steps">
-                        <div id="checkout-step-shipping" class="checkout-step">
-                            <h4>Shipping Information</h4>
-                            <form id="shipping-form">
-                                <label class="field">Full Name<input required /></label>
-                                <label class="field">Address<input required /></label>
-                                <div style="display:grid; grid-template-columns: 2fr 1fr; gap: 1rem">
-                                    <label class="field">City<input required /></label>
-                                    <label class="field">ZIP Code<input required /></label>
-                                </div>
-                                <button type="submit" class="btn btn-accent" style="width:100%">Continue to Payment</button>
-                            </form>
-                        </div>
-                        <div id="checkout-step-payment" class="checkout-step hidden">
-                            <h4>Payment Details</h4>
-                            <form id="payment-form">
-                                <label class="field">Card Number<input placeholder="**** **** **** ****" required /></label>
-                                <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem">
-                                    <label class="field">Expiry (MM/YY)<input placeholder="MM/YY" required /></label>
-                                    <label class="field">CVC<input placeholder="123" required /></label>
-                                </div>
-                                <button type="submit" class="btn btn-accent" style="width:100%">Place Order</button>
-                             </form>
-                        </div>
-                        <div id="checkout-step-confirmation" class="checkout-step hidden" style="text-align:center;">
-                            <h2 style="color:var(--accent)">Thank You!</h2>
-                            <p>Your order has been placed successfully.</p>
-                            <p>A confirmation email has been sent (not really!). Your order number is <strong id="order-number"></strong>.</p>
-                            <button class="btn" data-close-modal>Close</button>
-                        </div>
-                    </div>
-                    <div class="checkout-summary">
-                        <h4>Order Summary</h4>
-                        <div id="checkout-summary-items"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="notification-container"></div>
     </div>
+
+    <div id="notification-container"></div>
+  </div>
 
 <script type="importmap">
 {
-    "imports": {
-        "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js",
-        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
-    }
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js"
+  }
 }
 </script>
 
 <script type="module">
 import * as THREE from 'three';
-import { FontLoader } from 'three/addons/loaders/FontLoader.js';
-import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
-
-
-// ===================================
-// SHADER FOR GLOWING SHIFTING TEXT
-// ===================================
-
-const vertexShader = `
-    varying vec3 vNormal;
-    varying vec3 vPosition;
-    void main() {
-        vNormal = normal;
-        vPosition = position;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-`;
-
-const fragmentShader = `
-    uniform float time;
-    uniform vec3 colorA;
-    uniform vec3 colorB;
-    varying vec3 vNormal;
-    varying vec3 vPosition;
-
-    void main() {
-        // Simple ambient/diffuse lighting model
-        vec3 light = vec3(1.0);
-        vec3 normalizedNormal = normalize(vNormal);
-        float diffuse = max(dot(normalizedNormal, light), 0.0);
-        
-        // Calculate the horizontal position for the gradient along the X axis
-        float gradientPosition = (vPosition.x / 45.0) + 0.5; 
-
-        // Use a sinusoidal wave for the time shift to create a loop
-        float shiftA = sin(time * 0.3); // Slow shift for the blue color (colorA)
-        float shiftB = cos(time * 0.3); // Slow shift for the green color (colorB)
-
-        // Map the gradient and shift to a 0-1 range
-        float gradientFactor = mod(gradientPosition + shiftA, 1.0);
-
-        // Blend the two accent colors
-        vec3 mixedColor = mix(colorA, colorB, gradientFactor);
-
-        // Apply a subtle Fresnel-like effect to the edges for extra glow/depth
-        float rim = 1.0 - max(dot(normalizedNormal, normalize(-vPosition)), 0.0);
-        float rimPower = smoothstep(0.0, 1.0, rim);
-        
-        // The final color combines the diffuse light, the mixed gradient color, and the rim glow
-        vec3 finalColor = mixedColor * (0.5 + diffuse * 0.5) + mixedColor * rimPower * 0.8;
-        
-        gl_FragColor = vec4(finalColor, 1.0);
-    }
-`;
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -715,18 +644,18 @@ document.addEventListener('DOMContentLoaded', () => {
         updateTime();
         setInterval(updateTime, 1000 * 30);
 
-        // --- THREE.js Starfield (Kept) ---
-        const bgContainer = document.getElementById('three-canvas');
-        if (!bgContainer) return;
+        // --- THREE.js Starfield ---
+        const container = document.getElementById('three-canvas');
+        if (!container) return;
 
-        const bgScene = new THREE.Scene();
-        const bgCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        const bgRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        bgRenderer.setSize(window.innerWidth, window.innerHeight);
-        bgContainer.appendChild(bgRenderer.domElement);
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
 
-        bgCamera.position.z = 10; 
-        let targetZ = 10; 
+        camera.position.z = 10; // Start zoomed in
+        let targetZ = 10; // Initial target Z position
         let isTransitioning = false;
 
         const starVertices = [];
@@ -749,87 +678,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const stars = new THREE.Points(starGeometry, starMaterial);
-        bgScene.add(stars);
-
-        // --- 3D Logo Setup (New) ---
-        const logoCanvasContainer = document.getElementById('three-logo-container');
-        const logoCanvas = document.getElementById('three-logo-canvas');
-        
-        const logoScene = new THREE.Scene();
-        const logoCamera = new THREE.PerspectiveCamera(50, logoCanvasContainer.clientWidth / logoCanvasContainer.clientHeight, 0.1, 1000);
-        const logoRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas: logoCanvas });
-        logoRenderer.setSize(logoCanvasContainer.clientWidth, logoCanvasContainer.clientHeight);
-        
-        let textMesh;
-        const loader = new FontLoader();
-        loader.load('https://cdn.jsdelivr.net/npm/three@0.164.1/examples/fonts/helvetiker_regular.typeface.json', function(font) {
-            
-            // Convert accent colors to THREE.Color
-            const accentColor = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
-            const accent2Color = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent-2').trim());
-            
-            const uniforms = {
-                time: { value: 0.0 },
-                colorA: { value: accentColor },
-                colorB: { value: accent2Color },
-            };
-
-            const textMaterial = new THREE.ShaderMaterial({
-                uniforms: uniforms,
-                vertexShader: vertexShader,
-                fragmentShader: fragmentShader,
-                lights: false
-            });
-
-            const textGeometry = new TextGeometry('PrintGlow', {
-                font: font,
-                size: 20,
-                height: 4,
-                curveSegments: 8,
-                bevelEnabled: true,
-                bevelThickness: 1,
-                bevelSize: 0.5,
-                bevelOffset: 0,
-                bevelSegments: 4
-            });
-
-            textGeometry.computeBoundingBox();
-            const boundingBox = textGeometry.boundingBox;
-            const textWidth = boundingBox.max.x - boundingBox.min.x;
-
-            textMesh = new THREE.Mesh(textGeometry, textMaterial);
-            
-            // Center the text
-            textMesh.position.x = -textWidth / 2;
-            textMesh.position.y = -10; // Adjust for vertical centering
-            textMesh.position.z = 0;
-            
-            logoScene.add(textMesh);
-            logoCamera.position.z = 100;
-
-            // Update renderer size after font load
-            onLogoResize();
-        });
-
-
-        function onLogoResize() {
-            const width = logoCanvasContainer.clientWidth;
-            const height = logoCanvasContainer.clientHeight;
-            logoCamera.aspect = width / height;
-            logoCamera.updateProjectionMatrix();
-            logoRenderer.setSize(width, height);
-            // Re-render immediately to avoid flash of incorrect size
-            if(textMesh) logoRenderer.render(logoScene, logoCamera);
-        }
+        scene.add(stars);
 
         window.addEventListener('resize', () => {
-            bgCamera.aspect = window.innerWidth / window.innerHeight;
-            bgCamera.updateProjectionMatrix();
-            bgRenderer.setSize(window.innerWidth, window.innerHeight);
-            onLogoResize(); // Resize the logo canvas too
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
         }, false);
-        
-        const clock = new THREE.Clock();
         
         let mouseX = 0, mouseY = 0;
         document.addEventListener('mousemove', (e) => {
@@ -839,30 +694,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function animate() {
             requestAnimationFrame(animate);
-
-            // Background Animation
             stars.rotation.y += 0.0001;
             
-            bgCamera.position.z += (targetZ - bgCamera.position.z) * 0.03;
-            bgCamera.position.x += (mouseX * 5 - bgCamera.position.x) * 0.05;
-            bgCamera.position.y += (-mouseY * 5 - bgCamera.position.y) * 0.05;
-            bgCamera.lookAt(bgScene.position);
+            // Smoothly move camera towards target
+            camera.position.z += (targetZ - camera.position.z) * 0.03;
 
-            bgRenderer.render(bgScene, bgCamera);
-            
-            // Logo Animation
-            if (textMesh) {
-                const elapsedTime = clock.getElapsedTime();
-                
-                // Slow Rotation (Aesthetic Must-Have)
-                textMesh.rotation.y = elapsedTime * 0.1;
-                textMesh.rotation.x = Math.sin(elapsedTime * 0.2) * 0.05; // Subtle X-axis bobbing
+            // Mouse parallax effect
+            camera.position.x += (mouseX * 5 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 5 - camera.position.y) * 0.05;
+            camera.lookAt(scene.position);
 
-                // Gradient Shift (User Request)
-                textMesh.material.uniforms.time.value = elapsedTime;
-
-                logoRenderer.render(logoScene, logoCamera);
-            }
+            renderer.render(scene, camera);
         }
         animate();
 
@@ -956,12 +798,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function createProductCard(product) {
         return `
             <article class="card" data-product-id="${product.id}">
-                <div style="aspect-ratio:1; background: #0c121a; display:grid; place-items:center;"><img src="${product.image}" alt="${product.name}" loading="lazy"></div>
-                <div style="padding:1rem;">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <strong>${product.name}</strong><span style="font-weight:600">$${product.price.toFixed(2)}</span>
-                    </div>
+              <div style="aspect-ratio:1; background: #0c121a; display:grid; place-items:center;"><img src="${product.image}" alt="${product.name}" loading="lazy"></div>
+              <div style="padding:1rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong>${product.name}</strong><span style="font-weight:600">$${product.price.toFixed(2)}</span>
                 </div>
+              </div>
             </article>
         `;
     }
@@ -993,12 +835,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function initCustomizer() {
-        // Fallback or a simple implementation for fabric.js if the library loads
-        if (typeof fabric === 'undefined') {
-            console.warn('Fabric.js not loaded, Customizer functionality limited.');
-            return;
-        }
-
         const canvas = new fabric.Canvas('tshirt-canvas', { backgroundColor: '#0c121a' });
         let currentProduct = state.baseProducts[0];
         const listContainer = document.getElementById('base-product-list');
@@ -1040,12 +876,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function initBulkOrders() {
-        // Fallback or a simple implementation for fabric.js if the library loads
-        if (typeof fabric === 'undefined') {
-            console.warn('Fabric.js not loaded, Bulk Orders functionality limited.');
-            return;
-        }
-
         const canvas = new fabric.Canvas('bulk-tshirt-canvas', { backgroundColor: '#0c121a' });
         const productSelect = document.getElementById('bulk-base-product-select');
         let currentProduct = state.baseProducts[0];
@@ -1144,16 +974,16 @@ document.addEventListener('DOMContentLoaded', () => {
             footer.classList.remove('hidden');
             itemsContainer.innerHTML = state.cart.map(item => `
                 <div class="cart-item">
-                    <img src="${item.image}" alt="${item.name}" class="cart-item-img">
-                    <div><strong>${item.name}</strong><div class="price" style="color:var(--muted)">$${item.price.toFixed(2)} ${item.size ? `(${item.size})` : ''}</div></div>
-                    <div style="text-align:right">
-                        <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem">
-                            <button class="quantity-btn" data-id="${item.cartId}" data-change="-1">-</button>
-                            <span>${item.quantity}</span>
-                            <button class="quantity-btn" data-id="${item.cartId}" data-change="1">+</button>
-                        </div>
-                        <button class="remove-item-btn" data-id="${item.cartId}" style="font-size:.9rem; color:var(--danger)">Remove</button>
+                  <img src="${item.image}" alt="${item.name}" class="cart-item-img">
+                  <div><strong>${item.name}</strong><div class="price" style="color:var(--muted)">$${item.price.toFixed(2)} ${item.size ? `(${item.size})` : ''}</div></div>
+                  <div style="text-align:right">
+                    <div style="display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem">
+                      <button class="quantity-btn" data-id="${item.cartId}" data-change="-1">-</button>
+                      <span>${item.quantity}</span>
+                      <button class="quantity-btn" data-id="${item.cartId}" data-change="1">+</button>
                     </div>
+                    <button class="remove-item-btn" data-id="${item.cartId}" style="font-size:.9rem; color:var(--danger)">Remove</button>
+                  </div>
                 </div>
             `).join('');
         }
@@ -1279,7 +1109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 });
 </script>
-
+<!-- Fabric.js library for the customizer canvas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
 
 </body>
