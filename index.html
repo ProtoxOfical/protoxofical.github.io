@@ -356,38 +356,28 @@
   <div id="mainContent">
     <h1 class="dashboard-title">Jaylee's Memory Lane 🎄</h1>
     
-    <!-- 
-       INSTRUCTIONS FOR YOU:
-       Replace the 'src' links below with your actual images.
-       Example: src="my_pic.jpg" if the file is in the folder.
-    -->
-    
     <div class="memory-grid">
       
       <!-- MEMORY 1: JONAS BROTHERS -->
       <div class="polaroid" onclick="showMemory('concert')">
-        <!-- REPLACE THIS IMAGE LINK -->
         <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=2070&auto=format&fit=crop" alt="Concert">
         <div class="caption">Jonas Brothers 🎤</div>
       </div>
 
       <!-- MEMORY 2: CANES CHICKEN -->
       <div class="polaroid" onclick="showMemory('canes')">
-        <!-- REPLACE THIS IMAGE LINK -->
         <img src="https://wallpapers.com/images/hd/canes-chicken-fingers-box-meal-combo-g5268c2r78684v2u.jpg" alt="Canes">
         <div class="caption">Canes Date 🍗</div>
       </div>
 
       <!-- MEMORY 3: TIKTOK -->
       <div class="polaroid" onclick="showMemory('tiktok')">
-        <!-- REPLACE THIS IMAGE LINK -->
         <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop" alt="TikTok">
         <div class="caption">TikTok Queen 💃</div>
       </div>
 
       <!-- MEMORY 4: FOOD -->
       <div class="polaroid" onclick="showMemory('food')">
-        <!-- REPLACE THIS IMAGE LINK -->
         <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop" alt="Food">
         <div class="caption">Yummy Stuff 🍔</div>
       </div>
@@ -486,6 +476,7 @@
       }
     }
 
+    // --- FIXED MEMORY OBJECT ---
     const memories = {
       concert: {
         type: 'video',
@@ -499,7 +490,7 @@
       },
       tiktok: {
         type: 'image',
-        src: 'tiktok.jpg, 
+        src: 'tiktok.jpg', /* <--- FIXED: Added the closing quote here */
         text: "Gorgeous"
       },
       food: {
