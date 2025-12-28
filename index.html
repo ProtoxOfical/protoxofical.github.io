@@ -182,12 +182,15 @@
       z-index: 10;
       box-shadow: 0 15px 30px rgba(0,0,0,0.3);
     }
-    .polaroid img {
+    
+    /* Thumbnails: Forces image/video to fit inside the polaroid square */
+    .polaroid img, .polaroid video {
       width: 100%;
       height: 200px;
-      object-fit: cover;
+      object-fit: cover; /* This makes it a clean square thumbnail */
       border: 1px solid #eee;
     }
+    
     .caption {
       font-family: 'Indie Flower', cursive;
       font-size: 1.4em;
@@ -287,10 +290,11 @@
       align-items: center;
       flex-direction: column;
     }
-    #memoryContent {
-      max-width: 90%;
-      max-height: 80vh;
-      border: 10px solid white;
+    /* Full Size Media */
+    #mediaContainer img, #mediaContainer video {
+      max-width: 90vw;
+      max-height: 70vh;
+      border: 5px solid white;
       border-radius: 5px;
       box-shadow: 0 0 50px rgba(255,255,255,0.2);
     }
@@ -299,6 +303,7 @@
       font-family: 'Indie Flower', cursive;
       font-size: 2em;
       margin-top: 20px;
+      text-align: center;
     }
     #closeMemory {
       margin-top: 20px;
@@ -358,28 +363,30 @@
     
     <div class="memory-grid">
       
-      <!-- MEMORY 1: JONAS BROTHERS -->
+      <!-- MEMORY 1: JONAS BROTHERS (Video) -->
+      <!-- Updated filename to Jona.MP4 (Capital MP4) -->
       <div class="polaroid" onclick="showMemory('concert')">
-        <img src="https://images.unsplash.com/photo-1501386761578-eac5c94b800a?q=80&w=2070&auto=format&fit=crop" alt="Concert">
+        <video src="Jona.MP4" muted loop playsinline></video>
         <div class="caption">Jonas Brothers 🎤</div>
       </div>
 
       <!-- MEMORY 2: CANES CHICKEN -->
       <div class="polaroid" onclick="showMemory('canes')">
-        <img src="https://wallpapers.com/images/hd/canes-chicken-fingers-box-meal-combo-g5268c2r78684v2u.jpg" alt="Canes">
+        <img src="Canes.jpg" alt="Canes">
         <div class="caption">Canes Date 🍗</div>
       </div>
 
       <!-- MEMORY 3: TIKTOK -->
       <div class="polaroid" onclick="showMemory('tiktok')">
-        <img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1974&auto=format&fit=crop" alt="TikTok">
+        <img src="tiktok.jpg" alt="TikTok">
         <div class="caption">TikTok Queen 💃</div>
       </div>
 
-      <!-- MEMORY 4: FOOD -->
-      <div class="polaroid" onclick="showMemory('food')">
-        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=2070&auto=format&fit=crop" alt="Food">
-        <div class="caption">Yummy Stuff 🍔</div>
+      <!-- MEMORY 4: KISSING/LOVE (Renamed from Food) -->
+      <!-- Used snow.jpg as you requested -->
+      <div class="polaroid" onclick="showMemory('us')">
+        <img src="snow.jpg" alt="Us">
+        <div class="caption">Us ❤️</div>
       </div>
 
     </div>
@@ -476,27 +483,28 @@
       }
     }
 
-    // --- FIXED MEMORY OBJECT ---
+    // --- 3. MEMORIES DATA ---
+    // IMPORTANT: Filenames here must match your GitHub files exactly (Case Sensitive!)
     const memories = {
       concert: {
         type: 'video',
-        src: 'Jona.mp4',
-        text: "This was a blast"
+        src: 'Jona.MP4', // Fixed Case
+        text: "This was a blast! 🎶"
       },
       canes: {
         type: 'image',
-        src: 'Canes.jpg',
-        text: "Canes and DR pepper addict..."
+        src: 'Canes.jpg', // Fixed Case
+        text: "Canes and Dr. Pepper addict... 🍗"
       },
       tiktok: {
         type: 'image',
-        src: 'tiktok.jpg', /* <--- FIXED: Added the closing quote here */
-        text: "Gorgeous"
+        src: 'tiktok.jpg', // Fixed Case
+        text: "Gorgeous 💃"
       },
-      food: {
+      us: {
         type: 'image',
-        src: 'snow.jpg',
-        text: "This is so cute"
+        src: 'snow.jpg', // Fixed Case & Mapped to 'us'
+        text: "This is so cute ❤️"
       }
     };
 
@@ -511,12 +519,10 @@
       if (data.type === 'image') {
         const img = document.createElement('img');
         img.src = data.src;
-        img.id = "memoryContent";
         container.appendChild(img);
       } else if (data.type === 'video') {
         const vid = document.createElement('video');
         vid.src = data.src;
-        vid.id = "memoryContent";
         vid.controls = true;
         vid.autoplay = true;
         container.appendChild(vid);
@@ -527,9 +533,8 @@
     }
 
     function closeMemory() {
-      // Stop video if playing
       const container = document.getElementById('mediaContainer');
-      container.innerHTML = ""; 
+      container.innerHTML = ""; // Stop video
       document.getElementById('memoryOverlay').style.display = "none";
     }
 
