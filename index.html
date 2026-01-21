@@ -4,35 +4,63 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Us</title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="style.css" /> <!-- Note: Use ../style.css for subfolders -->
 </head>
 <body>
-  <div class="background" id="dynamicBg"></div>
-
+  
   <div class="container">
-    <div class="card">
-      <h1 id="leaderText">Loading...</h1>
-      <div class="status" id="scoreText">0 - 0</div>
-
-      <button class="heart-btn" id="clickHeart" aria-label="heart">❤️</button>
-      <div class="small">Admin view (no clicking here)</div>
-
-      <div class="stats">
-        <div>We have been dating for:</div>
-        <div class="days" id="daysCounter">0 Days</div>
-      </div>
-
-      <div class="small" id="adminHint" style="margin-top:14px;">
-        Her link: <a href="./jaylee/">/jaylee/</a> • Your link: <a href="./lazare/">/lazare/</a>
-      </div>
+    <div class="header">
+        <h2 class="title">We have been in love for</h2>
+        <div class="heart-display">
+            <span id="heartIcon">❤</span>
+        </div>
     </div>
+
+    <!-- The Rolling Timer -->
+    <div class="timer-grid" id="timer">
+        <div class="time-box">
+            <span id="t-years">0</span>
+            <span class="label">Years</span>
+        </div>
+        <div class="time-box">
+            <span id="t-days">0</span>
+            <span class="label">Days</span>
+        </div>
+        <div class="time-box">
+            <span id="t-hours">0</span>
+            <span class="label">Hours</span>
+        </div>
+        <div class="time-box">
+            <span id="t-minutes">0</span>
+            <span class="label">Minutes</span>
+        </div>
+        <div class="time-box">
+            <span id="t-seconds">0</span>
+            <span class="label">Seconds</span>
+        </div>
+    </div>
+
+    <!-- The Click Battle Section -->
+    <div class="battle-section">
+        <div class="scores">
+            <span class="p-name">Lazare</span>
+            <span id="scoreText">0 - 0</span>
+            <span class="p-name">Jaylee</span>
+        </div>
+        <div id="leaderText" class="leader-text">Loading...</div>
+        
+        <button class="action-btn" id="clickHeart">
+            TAP LOVE
+        </button>
+    </div>
+    
+    <div class="identity" id="userIdentity">...</div>
   </div>
 
-  <div class="identity" id="userIdentity">Detecting user...</div>
-
   <script>
-    window.IDENTITY = "admin";
+    // CHANGE THIS VALUE BASED ON THE FOLDER (admin, jaylee, or lazare)
+    window.IDENTITY = "admin"; 
   </script>
-  <script src="./app.js"></script>
+  <script src="app.js"></script> <!-- Note: Use ../app.js for subfolders -->
 </body>
 </html>
