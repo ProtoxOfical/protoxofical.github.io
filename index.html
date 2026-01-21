@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Us</title>
-  <link rel="stylesheet" href="style.css" /> <!-- Note: Use ../style.css for subfolders -->
+  <title>Us - Lazare</title>
+  <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
   
@@ -16,7 +16,6 @@
         </div>
     </div>
 
-    <!-- The Rolling Timer -->
     <div class="timer-grid" id="timer">
         <div class="time-box">
             <span id="t-years">0</span>
@@ -40,13 +39,14 @@
         </div>
     </div>
 
-    <!-- The Click Battle Section -->
     <div class="battle-section">
         <div class="scores">
             <span class="p-name">Lazare</span>
+            <!-- This ID 'scoreText' is crucial for the JS -->
             <span id="scoreText">0 - 0</span>
             <span class="p-name">Jaylee</span>
         </div>
+        <!-- This ID 'leaderText' is also crucial -->
         <div id="leaderText" class="leader-text">Loading...</div>
         
         <button class="action-btn" id="clickHeart">
@@ -58,9 +58,8 @@
   </div>
 
   <script>
-    // CHANGE THIS VALUE BASED ON THE FOLDER (admin, jaylee, or lazare)
-    window.IDENTITY = "admin"; 
+    window.IDENTITY = "lazare";
   </script>
-  <script src="app.js"></script> <!-- Note: Use ../app.js for subfolders -->
+  <script src="../app.js"></script>
 </body>
 </html>
