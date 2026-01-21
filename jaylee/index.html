@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Us</title>
-  <link rel="stylesheet" href="style.css" /> <!-- Note: Use ../style.css for subfolders -->
+  <title>Us - Jaylee</title>
+  <link rel="stylesheet" href="../style.css" />
 </head>
 <body>
   
@@ -16,31 +16,14 @@
         </div>
     </div>
 
-    <!-- The Rolling Timer -->
     <div class="timer-grid" id="timer">
-        <div class="time-box">
-            <span id="t-years">0</span>
-            <span class="label">Years</span>
-        </div>
-        <div class="time-box">
-            <span id="t-days">0</span>
-            <span class="label">Days</span>
-        </div>
-        <div class="time-box">
-            <span id="t-hours">0</span>
-            <span class="label">Hours</span>
-        </div>
-        <div class="time-box">
-            <span id="t-minutes">0</span>
-            <span class="label">Minutes</span>
-        </div>
-        <div class="time-box">
-            <span id="t-seconds">0</span>
-            <span class="label">Seconds</span>
-        </div>
+        <div class="time-box"><span id="t-years">0</span><span class="label">Years</span></div>
+        <div class="time-box"><span id="t-days">0</span><span class="label">Days</span></div>
+        <div class="time-box"><span id="t-hours">0</span><span class="label">Hours</span></div>
+        <div class="time-box"><span id="t-minutes">0</span><span class="label">Minutes</span></div>
+        <div class="time-box"><span id="t-seconds">0</span><span class="label">Seconds</span></div>
     </div>
 
-    <!-- The Click Battle Section -->
     <div class="battle-section">
         <div class="scores">
             <span class="p-name">Lazare</span>
@@ -48,19 +31,15 @@
             <span class="p-name">Jaylee</span>
         </div>
         <div id="leaderText" class="leader-text">Loading...</div>
-        
-        <button class="action-btn" id="clickHeart">
-            TAP LOVE
-        </button>
+        <button class="action-btn" id="clickHeart">TAP LOVE</button>
     </div>
     
     <div class="identity" id="userIdentity">...</div>
   </div>
 
   <script>
-    // CHANGE THIS VALUE BASED ON THE FOLDER (admin, jaylee, or lazare)
-    window.IDENTITY = "jaylee"; 
+    window.IDENTITY = "jaylee";
   </script>
-  <script src="app.js"></script> <!-- Note: Use ../app.js for subfolders -->
+  <script src="../app.js"></script>
 </body>
 </html>
