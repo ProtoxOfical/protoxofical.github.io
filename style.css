@@ -3,14 +3,17 @@
   --color-text: #ffffff;
   --color-her: #ff9a9e; /* Pink */
   --color-me:  #8e44ad; /* Purple */
-  --split-point: 50%;   /* Controlled by JS */
+  --split-point: 50%;
 }
 
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
+  /* Fallback color in case variables fail */
+  background-color: #111111;
   background-color: var(--color-bg);
+  color: #ffffff;
   color: var(--color-text);
   font-family: system-ui, -apple-system, sans-serif;
   display: flex;
@@ -40,41 +43,29 @@ html, body {
 
 /* --- The Rolling Timer --- */
 .timer-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 15px;
-  width: 100%;
-}
-
-/* Center the bottom two items of the grid */
-.timer-grid .time-box:nth-last-child(-n+2) {
-  grid-column: auto;
-}
-/* Force the last 2 items to be centered in a new row if needed, 
-   or just let them flow. Better specific alignment: */
-.timer-grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 20px;
+  gap: 15px;
+  margin-bottom: 30px;
+  width: 100%;
 }
 
 .time-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 70px;
+  min-width: 60px;
 }
 
 .time-box span:first-child {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: 700;
   line-height: 1;
 }
 
 .time-box .label {
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   opacity: 0.6;
   text-transform: uppercase;
   margin-top: 5px;
@@ -89,7 +80,6 @@ html, body {
 }
 
 #heartIcon {
-  /* This makes the gradient appear INSIDE the heart character */
   background: linear-gradient(
     90deg,
     var(--color-her) 0%,
@@ -106,19 +96,19 @@ html, body {
 
 /* --- Battle Section --- */
 .battle-section {
-  background: rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 20px;
-  padding: 20px 40px;
+  padding: 25px;
   width: 100%;
   box-sizing: border-box;
   backdrop-filter: blur(5px);
-  margin-top: 20px;
 }
 
 .scores {
   font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -129,7 +119,7 @@ html, body {
 .leader-text {
   font-size: 0.9rem;
   margin-bottom: 20px;
-  color: #ccc;
+  color: #ddd;
   min-height: 1.2em;
 }
 
@@ -137,12 +127,13 @@ html, body {
   background: white;
   color: black;
   border: none;
-  padding: 12px 30px;
+  padding: 14px 40px;
   border-radius: 50px;
   font-weight: 800;
-  font-size: 1rem;
+  font-size: 1.1rem;
   cursor: pointer;
   transition: transform 0.1s;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
 .action-btn:active {
