@@ -1,15 +1,10 @@
 // ===== CONFIG =====
-const START_DATE = new Date(2025, 11, 17); // Dec 17, 2025 (change this)
+const START_DATE = new Date(2025, 11, 17); // Dec 17, 2025
 const YOU_NAME = "Lazare";
 const HER_NAME = "Jaylee";
+const API = "https://tiny-shape-93d0.tamovacheishvili.workers.dev";
 
-// Storage keys (demo only)
-const KEY_HER = "love_clicks_jaylee";
-const KEY_YOU = "love_clicks_lazare";
-
-const getCount = (k) => Number(localStorage.getItem(k) || "0");
-const setCount = (k, v) => localStorage.setItem(k, String(v));
-
+// ===== HELPERS =====
 function daysTogether(){
   const now = new Date();
   const diff = now - START_DATE;
@@ -24,59 +19,67 @@ function winnerLine(you, her){
 
 function updateGradient(you, her){
   const total = you + her;
+  let purpleShare = total === 0 ? 0.5 : you / total;
 
-  // share of PURPLE (you)
-  let purpleShare = total === 0 ? 0.5 : (you / total);
-
-  // clamp so one side never fully disappears
+  // clamp so neither color disappears
   purpleShare = Math.min(Math.max(purpleShare, 0.1), 0.9);
 
-  // --split-point is where PINK ends; if purpleShare grows -> split moves LEFT
+  // --split-point = where pink ends
   const splitPoint = (1 - purpleShare) * 100;
-
   document.documentElement.style.setProperty("--split-point", `${splitPoint}%`);
 }
 
-function render(identity){
-  const you = getCount(KEY_YOU);
-  const her = getCount(KEY_HER);
+// ===== API =====
+async function fetchCounts(){
+  const res = await fetch(API);
+  return await res.json();
+}
+
+async function registerClick(identity){
+  if (identity !== "jaylee" && identity !== "lazare") return;
+  await fetch(`${API}?action=click&user=${identity}`);
+}
+
+// ===== UI =====
+async function render(identity){
+  const data = await fetchCounts();
+  const you = data.lazare;
+  const her = data.jaylee;
 
   document.getElementById("scoreText").textContent =
     `${YOU_NAME}: ${you} | ${HER_NAME}: ${her}`;
 
-  document.getElementById("leaderText").textContent = winnerLine(you, her);
-  document.getElementById("daysCounter").textContent = `${daysTogether()} Days`;
+  document.getElementById("leaderText").textContent =
+    winnerLine(you, her);
+
+  document.getElementById("daysCounter").textContent =
+    `${daysTogether()} Days`;
 
   const idEl = document.getElementById("userIdentity");
   idEl.textContent =
     identity === "jaylee" ? `Logged in as: ${HER_NAME} (Pink)` :
     identity === "lazare" ? `Logged in as: ${YOU_NAME} (Purple)` :
-    `Admin view (demo)`;
+    `Admin view`;
 
   updateGradient(you, her);
 
-  // Admin hint
   const adminHint = document.getElementById("adminHint");
   if (adminHint){
     adminHint.style.display = identity === "admin" ? "block" : "none";
   }
 }
 
+// ===== INIT =====
 function init(){
-  // identity injected by each page
   const identity = window.IDENTITY || "admin";
-
   const btn = document.getElementById("clickHeart");
+
   if (identity === "admin"){
-    // Disable clicks in admin (optional)
-    btn.addEventListener("click", () => {
-      // no-op
-    });
+    btn.addEventListener("click", () => {});
   } else {
-    btn.addEventListener("click", () => {
-      if (identity === "jaylee") setCount(KEY_HER, getCount(KEY_HER) + 1);
-      if (identity === "lazare") setCount(KEY_YOU, getCount(KEY_YOU) + 1);
-      render(identity);
+    btn.addEventListener("click", async () => {
+      await registerClick(identity);
+      await render(identity);
     });
   }
 
