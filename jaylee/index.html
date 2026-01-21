@@ -2,44 +2,372 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Us - Jaylee</title>
-  <link rel="stylesheet" href="../style.css" />
+  <style>
+    :root {
+      --color-her: #ff9a9e; /* Soft Pink */
+      --color-me:  #a18cd1; /* Soft Purple */
+      --text-main: #4a4a4a;
+      --text-light: #888888;
+      --split-point: 50%;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      /* Dynamic Background based on who is winning */
+      background: linear-gradient(135deg, var(--color-her) 0%, var(--color-her) var(--split-point), var(--color-me) var(--split-point), var(--color-me) 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      transition: background 0.5s ease;
+    }
+
+    /* The Main Card */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      width: 90%;
+      max-width: 420px;
+      padding: 40px 30px;
+      border-radius: 30px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      text-align: center;
+      position: relative;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    /* Header */
+    .title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      font-weight: 700;
+      margin: 0 0 25px 0;
+    }
+
+    /* The Heart Icon */
+    .heart-wrapper {
+      margin-bottom: 30px;
+      position: relative;
+      height: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .heart-btn {
+      font-size: 80px;
+      border: none;
+      background: none;
+      padding: 0;
+      margin: 0;
+      cursor: pointer;
+      /* Gradient Text for the heart */
+      background: linear-gradient(to bottom right, var(--color-her), var(--color-me));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 10px 15px rgba(255, 154, 158, 0.4));
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      animation: beat 2s infinite;
+    }
+
+    .heart-btn:active {
+      transform: scale(0.85);
+      animation: none;
+    }
+
+    @keyframes beat {
+      0% { transform: scale(1); }
+      14% { transform: scale(1.1); }
+      28% { transform: scale(1); }
+      42% { transform: scale(1.1); }
+      70% { transform: scale(1); }
+    }
+
+    /* Rolling Timer */
+    .timer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      row-gap: 25px;
+      column-gap: 10px;
+      margin-bottom: 40px;
+    }
+
+    /* Layout tweak for 5 items: 3 on top, 2 on bottom centered */
+    .timer-row-1 {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 25px;
+    }
+    .timer-row-2 {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+    }
+
+    .time-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .time-val {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .time-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-top: 6px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Score / Battle Section */
+    .battle-info {
+      border-top: 1px solid rgba(0,0,0,0.05);
+      padding-top: 20px;
+    }
+
+    .score-board {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      color: var(--text-main);
+      font-size: 18px;
+      margin-bottom: 8px;
+    }
+
+    .name-badge {
+      font-size: 13px;
+      color: var(--text-light);
+      font-weight: 600;
+    }
+
+    .leader-msg {
+      font-size: 13px;
+      color: var(--color-her); /* Changes dynamically via JS logic */
+      min-height: 20px;
+      font-weight: 600;
+    }
+
+    .tap-hint {
+      font-size: 11px;
+      color: #aaa;
+      margin-top: 5px;
+    }
+
+    .identity {
+      position: absolute;
+      bottom: -30px;
+      width: 100%;
+      text-align: center;
+      color: rgba(255,255,255,0.7);
+      font-size: 11px;
+      left: 0;
+    }
+
+  </style>
 </head>
 <body>
-  
-  <div class="container">
-    <div class="header">
-        <h2 class="title">We have been in love for</h2>
-        <div class="heart-display">
-            <span id="heartIcon">❤</span>
+
+  <div class="card">
+    <h1 class="title">We have been together for</h1>
+
+    <!-- Custom Layout for the Timer -->
+    <div class="timer-container">
+      <div class="timer-row-1">
+        <div class="time-unit">
+          <span class="time-val" id="t-years">0</span>
+          <span class="time-label">Years</span>
         </div>
+        <div class="time-unit">
+          <span class="time-val" id="t-days">0</span>
+          <span class="time-label">Days</span>
+        </div>
+        <div class="time-unit">
+          <span class="time-val" id="t-hours">00</span>
+          <span class="time-label">Hours</span>
+        </div>
+      </div>
+      <div class="timer-row-2">
+        <div class="time-unit">
+          <span class="time-val" id="t-minutes">00</span>
+          <span class="time-label">Minutes</span>
+        </div>
+        <div class="time-unit">
+          <span class="time-val" id="t-seconds">00</span>
+          <span class="time-label">Seconds</span>
+        </div>
+      </div>
     </div>
 
-    <div class="timer-grid" id="timer">
-        <div class="time-box"><span id="t-years">0</span><span class="label">Years</span></div>
-        <div class="time-box"><span id="t-days">0</span><span class="label">Days</span></div>
-        <div class="time-box"><span id="t-hours">0</span><span class="label">Hours</span></div>
-        <div class="time-box"><span id="t-minutes">0</span><span class="label">Minutes</span></div>
-        <div class="time-box"><span id="t-seconds">0</span><span class="label">Seconds</span></div>
+    <!-- The Heart Button -->
+    <div class="heart-wrapper">
+      <button id="clickHeart" class="heart-btn">❤</button>
     </div>
 
-    <div class="battle-section">
-        <div class="scores">
-            <span class="p-name">Lazare</span>
-            <span id="scoreText">0 - 0</span>
-            <span class="p-name">Jaylee</span>
-        </div>
-        <div id="leaderText" class="leader-text">Loading...</div>
-        <button class="action-btn" id="clickHeart">TAP LOVE</button>
+    <!-- Battle Info -->
+    <div class="battle-info">
+      <div class="score-board">
+        <span class="name-badge">Lazare</span>
+        <span id="scoreText">0 - 0</span>
+        <span class="name-badge">Jaylee</span>
+      </div>
+      <div id="leaderText" class="leader-msg">Connecting...</div>
+      <div class="tap-hint">Tap the heart to show love</div>
     </div>
-    
-    <div class="identity" id="userIdentity">...</div>
+
+    <div class="identity">Logged in as: Jaylee</div>
   </div>
 
   <script>
-    window.IDENTITY = "jaylee";
+    // ===== CONFIG =====
+    const CURRENT_IDENTITY = "jaylee"; // FILE SPECIFIC
+    const START_DATE = new Date(2025, 0, 14, 0, 0, 0); 
+    const YOU_NAME = "Lazare";
+    const HER_NAME = "Jaylee";
+    const API = "https://tiny-shape-93d0.tamovacheishvili.workers.dev";
+
+    // State
+    let localLazare = 0;
+    let localJaylee = 0;
+    let pendingClicks = 0;
+    let clickTimeout = null;
+
+    // ===== TIME CALCULATION =====
+    function updateTimer() {
+      const now = new Date();
+      let diff = now - START_DATE;
+
+      const seconds = Math.floor((diff / 1000) % 60);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      const years = Math.floor(days / 365);
+      const remainingDays = days % 365;
+
+      const setObj = (id, val) => {
+          const el = document.getElementById(id);
+          if(el) el.innerText = val;
+      };
+
+      setObj("t-years", years);
+      setObj("t-days", remainingDays);
+      setObj("t-hours", String(hours).padStart(2, '0'));
+      setObj("t-minutes", String(minutes).padStart(2, '0'));
+      setObj("t-seconds", String(seconds).padStart(2, '0'));
+    }
+
+    // ===== UI LOGIC =====
+    function getWinnerLine(you, her) {
+      if (you > her) return `${YOU_NAME} is loving more! 💜`;
+      if (her > you) return `${HER_NAME} is loving more! 💖`;
+      return `It's a tie! Both in love ❤️`;
+    }
+
+    function updateGradient(you, her) {
+      const total = you + her;
+      let jayleeShare = total === 0 ? 0.5 : her / total;
+      
+      // Calculate percentage (clamped slightly so color doesn't vanish)
+      let splitPercent = jayleeShare * 100;
+      splitPercent = Math.min(Math.max(splitPercent, 10), 90);
+
+      document.documentElement.style.setProperty("--split-point", `${splitPercent}%`);
+    }
+
+    function render(you, her) {
+      const scoreEl = document.getElementById("scoreText");
+      const leaderEl = document.getElementById("leaderText");
+
+      if (scoreEl) scoreEl.textContent = `${you} - ${her}`;
+      if (leaderEl) {
+        leaderEl.textContent = getWinnerLine(you, her);
+        // Change text color based on winner
+        leaderEl.style.color = (you > her) ? "var(--color-me)" : (her > you) ? "var(--color-her)" : "#888";
+      }
+      
+      updateGradient(you, her);
+    }
+
+    // ===== NETWORKING =====
+    async function fetchCounts() {
+      try {
+        const res = await fetch(API);
+        const data = await res.json();
+        
+        if (data.lazare > localLazare) localLazare = data.lazare;
+        if (data.jaylee > localJaylee) localJaylee = data.jaylee;
+        
+        let displayLazare = localLazare;
+        let displayJaylee = localJaylee;
+        
+        // Add optimistic clicks
+        if (CURRENT_IDENTITY === "lazare") displayLazare += pendingClicks;
+        if (CURRENT_IDENTITY === "jaylee") displayJaylee += pendingClicks;
+
+        render(displayLazare, displayJaylee);
+      } catch (e) {
+        console.error("Fetch error", e);
+      }
+    }
+
+    async function handleUserClick() {
+      pendingClicks++;
+      
+      // Update UI immediately
+      if (CURRENT_IDENTITY === "lazare") render(localLazare + pendingClicks, localJaylee);
+      else if (CURRENT_IDENTITY === "jaylee") render(localLazare, localJaylee + pendingClicks);
+
+      // Simple debounce
+      if (clickTimeout) clearTimeout(clickTimeout);
+
+      clickTimeout = setTimeout(async () => {
+        const clicksToSend = pendingClicks;
+        pendingClicks = 0; 
+        
+        // Loop requests
+        for(let i=0; i<clicksToSend; i++){
+           fetch(`${API}?action=click&user=${CURRENT_IDENTITY}`).catch(e => console.log(e));
+        }
+        setTimeout(fetchCounts, 500); 
+      }, 2000); 
+    }
+
+    // ===== INIT =====
+    function init() {
+      const btn = document.getElementById("clickHeart");
+
+      // Time
+      setInterval(updateTimer, 1000);
+      updateTimer();
+
+      // Data
+      fetchCounts();
+      setInterval(fetchCounts, 2000);
+
+      // Events
+      if (btn) btn.addEventListener("click", handleUserClick);
+    }
+
+    window.addEventListener("DOMContentLoaded", init);
   </script>
-  <script src="../app.js"></script>
 </body>
 </html>
