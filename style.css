@@ -1,0 +1,121 @@
+:root{
+  --color-her: #ff9a9e; /* pink */
+  --color-me:  #8e44ad; /* purple */
+  --split-point: 50%;   /* where pink ends and purple begins */
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  overflow: hidden;
+}
+
+.background{
+  position: fixed;
+  inset: 0;
+  /* Narrower blend band so it reflects the numbers accurately */
+  background: linear-gradient(
+    115deg,
+    var(--color-her) 0%,
+    var(--color-her) calc(var(--split-point) - 6%),
+    var(--color-me)  calc(var(--split-point) + 6%),
+    var(--color-me)  100%
+  );
+  background-size: 200% 200%;
+  animation: waveMotion 18s ease-in-out infinite alternate;
+  transition: background 0.35s ease;
+  z-index: -1;
+}
+
+@keyframes waveMotion {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+
+.container{
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 2px 14px rgba(0,0,0,0.25);
+}
+
+.card{
+  width: min(420px, 92vw);
+  padding: 28px 22px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.16);
+  border: 1px solid rgba(255,255,255,0.22);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 18px 60px rgba(0,0,0,0.20);
+}
+
+h1{
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+}
+
+.status{
+  font-weight: 700;
+  font-size: 16px;
+  opacity: 0.95;
+  margin-bottom: 18px;
+  min-height: 1.4em;
+}
+
+.heart-btn{
+  border: none;
+  background: transparent;
+  font-size: 92px;
+  cursor: pointer;
+  filter: drop-shadow(0 0 12px rgba(255,255,255,0.45));
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  animation: heartbeat 1.6s infinite;
+}
+
+.heart-btn:active{
+  transform: scale(0.92);
+  animation: none;
+}
+
+@keyframes heartbeat{
+  0% { transform: scale(1); }
+  15% { transform: scale(1.08); }
+  30% { transform: scale(1); }
+  45% { transform: scale(1.08); }
+  60% { transform: scale(1); }
+}
+
+.small{
+  margin-top: -6px;
+  opacity: 0.85;
+  font-size: 13px;
+}
+
+.stats{
+  margin-top: 18px;
+  font-size: 14px;
+  opacity: 0.95;
+}
+
+.days{
+  margin-top: 6px;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.identity{
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+  opacity: 0.55;
+  font-size: 12px;
+}
+a{ color: inherit; }
