@@ -1,5 +1,5 @@
 // ===== CONFIG =====
-const START_DATE = new Date(2025, 11, 17); // Dec 17, 2025
+const START_DATE = new Date(2025, 0, 14); // Dec 17, 2025
 const YOU_NAME = "Lazare";
 const HER_NAME = "Jaylee";
 const API = "https://tiny-shape-93d0.tamovacheishvili.workers.dev";
